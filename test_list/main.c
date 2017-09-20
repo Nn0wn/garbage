@@ -75,7 +75,7 @@ struct elem* modify3(struct elem* head)
     tmp=tmp3;
     while(tmp->next)
     {
-        if(((tmp->next->value)<0)&&((tmp->next->value%2)!=0)&&(tmp->next!=NULL))
+        if(((tmp->next->value)<0)&&((tmp->next->value%2)!=0))
         {
             tmp2=tmp;
             tmp=tmp->next;
