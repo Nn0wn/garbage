@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1505939702 source:c:\users\zo_om\documents\codeblocks\test_list\main.c
+	<stdio.h>
+	<stdlib.h>
+
