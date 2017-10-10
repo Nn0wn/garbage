@@ -36,7 +36,6 @@ void Dialog::on_cancel_clicked()
 
 void Dialog::on_treeView_doubleClicked(const QModelIndex &index)
 {
-    //QTreeView *treeView=(QTreeView*)sender();
     QFileInfo fileInfo=model->fileInfo(index);
 
     ui->lineEdit->setText(fileInfo.absoluteFilePath());

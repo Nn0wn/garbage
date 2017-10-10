@@ -17,6 +17,7 @@ int* graph(int k, int* roads1, int* roads2, int* result, int j, int y, int towns
 int roads(int n);
 
 QString buff;
+int flag=0;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -40,29 +41,41 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_Enter_clicked()
 {
-    int starting_point=0, arrival_point=0, towns=0, j=0, y=0, z=0, d=0, i=0;
-    QString listString;
+    if(flag==0)
+        return;
+    int starting_point=0, arrival_point=0, towns=0, j=0, y=0, z=0, d=0, i=0;;
     QList<QString> list= buff.split(" ", QString::SkipEmptyParts);
     int size = list.size();
-    for(i=0; i<size; i++)
-    ui->textEdit->append(list[i]);
-    i=0;
+    if((size<3)||(size%2==0))
+    {
+        ui->textEdit->setText("Error, there is a problem with input data");
+        return;
+    }
     towns=list[i].toInt();
     d=roads(towns);
-    //printf("%d", d);
+    if(((size-3)/2)>d)
+    {
+        ui->textEdit->setText("Error, too many roads");
+        return;
+    }
     int* roads1=new int[d];
     int* roads2=new int[d];
     int* result=new int[d*d];
     memset(roads1, 0, 4*d);
     memset(roads2, 0, 4*d);
     memset(result, 0, 4*d);
-    for(i=0; i<(size-3)/2; i++)
+    for(i=1; i<(size-3)/2; i++)
     {
         roads1[i]=list[2*i+1].toInt();
         roads2[i]=list[2*(i+1)].toInt();
     }
     starting_point=list[2*i+1].toInt();
     arrival_point=list[2*i+2].toInt();
+    if((starting_point>towns)||(arrival_point>towns))
+    {
+        ui->textEdit->setText("You entered wrong coordinates");
+        return;
+    }
     graph(starting_point, roads1, roads2, result, j, y, towns);
     for(int i=0; i<d*d; i++)
     {
@@ -75,10 +88,14 @@ void MainWindow::on_Enter_clicked()
         {
             ui->textEdit->setPlainText("There is a road between these towns");
             z=1;
+            flag=0;
         }
     }
     if(z!=1)
+    {
         ui->textEdit->setPlainText("There is no road between these towns");
+        flag=0;
+    }
     delete(roads1);
     delete(roads2);
     delete(result);
@@ -135,12 +152,18 @@ QString MainWindow::ReadToFile(const QString &FilePath)
     QFile input(FilePath);
     if(!input.open(QFile::ReadOnly|QFile::Text))
     {
-        QMessageBox::information(this, "Error", "Path is not correct!");
+        QMessageBox::information(this, "Error", "Path is not correct!");        
         return buff;
     }
     QTextStream stream(&input);
-
+    int p=input.size();
+    if(p==0)
+    {
+        input.close();
+        return buff;
+    }
     buff=stream.readAll();
     input.close();
+    flag=1;
     return buff;
 }
