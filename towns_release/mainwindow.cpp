@@ -64,7 +64,7 @@ void MainWindow::on_Enter_clicked()
     memset(roads1, 0, 4*d);
     memset(roads2, 0, 4*d);
     memset(result, 0, 4*d);
-    for(i=1; i<(size-3)/2; i++)
+    for(i=i; i<(size-3)/2; i++)
     {
         roads1[i]=list[2*i+1].toInt();
         roads2[i]=list[2*(i+1)].toInt();
