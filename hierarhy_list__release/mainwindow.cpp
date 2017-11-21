@@ -12,27 +12,14 @@
 
 using namespace std;
 
-
-
-
-//int* graph(int k, int* roads1, int* roads2, int* result, int j, int y, int towns);
-int analyser(QString buffer, int length);
-
-//int roads(int n);
-
 QString buff;
-
-
 int flag=0;
-
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
 
 }
 
@@ -42,7 +29,7 @@ MainWindow::~MainWindow()
 }
 
 
-typedef char* base;      // базовый тип элементов (атомов)
+typedef char* base;
 struct s_expr;
 
 struct  two_ptr
@@ -52,7 +39,7 @@ struct  two_ptr
 };
 struct s_expr
 {
-    bool tag; // true: atom, false: pair
+    bool tag;
     union
     {
         base atom;
@@ -65,15 +52,13 @@ typedef s_expr *lisp;
 base x1, zam;
 bool find_zam = false;
 int N = 0;
+lisp hier_list;
 
-
-
-//void print_s_expr( node* s );
-
+int analyser(QString buffer, int length);
 lisp head(const lisp s);
 lisp tail(const lisp s);
 lisp cons(const lisp h, const lisp t);
-lisp make_atom(const base x, int flag);
+lisp make_atom(const base x);
 bool isAtom(const lisp s);
 bool isNull(const lisp s);
 void destroy(lisp s);
@@ -83,6 +68,8 @@ int read_elem(char prev, lisp& list, base elem, char *buffch, int i);
 int read_seq(lisp& list, char *buffch, int i);
 int write_lisp(const lisp x, char *arr, int i);
 int write_seq(const lisp x, char *arr, int i);
+int change_atoms(const lisp x, const char* first_line, const char *second_line, int i);
+int change_atoms_next(const lisp x, const char *first_line, const char *second_line, int i);
 
 void read_lisp(lisp &list, char *buffch)
 {
@@ -92,19 +79,11 @@ void read_lisp(lisp &list, char *buffch)
     int i=0;
     int j=0;
     base elem = new char;
-//    while(buffch[i]!='\0')
-//    {
     do
     {
         if((buffch[i]!=' ')&&(buffch[i]!='(')&&(buffch[i]!=')'))
         {
             fl1=true;
-//            if(fl2==true)
-//            {
-//                fl2=false;
-//                elem[j]=' ';
-//                j++;
-//            }
             elem[j]=buffch[i];
             i++;
             j++;
@@ -130,33 +109,29 @@ void read_lisp(lisp &list, char *buffch)
                 i++;
         }
     }while(((buffch[i]!='(')&&(buffch[i]!='\0')&&(buffch[i]!=')')&&(buffch[i-1]!='(')&&(buffch[i-1]!=')'))||
-           (buffch[i]==' ')/*(elem[j-1]!='(')&&(elem[j-1]!=')')*/);
+           (buffch[i]==' '));
         elem[j]='\0';
         k=read_elem(elem[j-1], list,  elem, buffch, i);
         if(i<k)
             i=k;
         j=0;
         i++;
-//    }
-} //end read_lisp
+}
 
 
 
 
 int read_elem(char prev, lisp& list, base elem, char* buffch, int i)
-{ //prev - ранее прочитанный символ}
+{
     int j=i;
     if (prev == ')')
     {
-        //cout << " ! List.Error 1 " << endl;
-        //system("Pause");
-        //exit(1);
         return i;
     }
     else
     {
         if (prev != '(')
-            list = make_atom(elem, 0);
+            list = make_atom(elem);
         else
         {
             j=read_seq(list, buffch, j++);
@@ -165,7 +140,7 @@ int read_elem(char prev, lisp& list, base elem, char* buffch, int i)
         }
     }
     return i;
-} //end read_s_expr
+}
 
 int read_seq(lisp& list, char *buffch, int i)
 {
@@ -179,30 +154,15 @@ int read_seq(lisp& list, char *buffch, int i)
     lisp part2;
     if (buffch[i]=='\0')
     {
-        //cout << " ! List.Error 2 " << endl;
-        //system("Pause");
-        //exit(1);
         return i;
     }
     else
     {
-//        while ((buffch[i] != ' ')&&(buffch[i]!='\0'))
-//        {
-//            elem[j]=buffch[i];
-//            i++;
-//            j++;
-//        }
         do
         {
             if((buffch[i]!=' ')&&(buffch[i]!='(')&&(buffch[i]!=')'))
             {
                 fl1=true;
-    //            if(fl2==true)
-    //            {
-    //                fl2=false;
-    //                elem[j]=' ';
-    //                j++;
-    //            }
                 elem[j]=buffch[i];
                 i++;
                 j++;
@@ -228,7 +188,7 @@ int read_seq(lisp& list, char *buffch, int i)
                     i++;
             }
         }while(((buffch[i]!='(')&&(buffch[i]!='\0')&&(buffch[i]!=')')&&(buffch[i-1]!='(')&&(buffch[i-1]!=')'))||
-               (buffch[i]==' ')/*(elem[j-1]!='(')&&(elem[j-1]!=')')*/);
+               (buffch[i]==' '));
         elem[j]='\0';
         if (elem[j-1] == ')'){
             list = NULL;
@@ -246,31 +206,14 @@ int read_seq(lisp& list, char *buffch, int i)
         }
     }
     return i;
-} //end read_seq
+}
 
-lisp make_atom(const base x, int flag)
+lisp make_atom(const base x)
 {
     lisp new_one = NULL;
-    int flag2 = 0;
     new_one = new s_expr;
     new_one->tag = true;
-//    if (x == x1)
-//    {
-//        s->node.atom = zam;
-//        flag2 = 1;
-//        find_zam = true;
-//    }
-//    else
         new_one->node.atom = x;
-    if (flag == 1)
-    {
-        N++;
-        //if (flag2 == 0)
-            //cout << "Шаг " << N << ". Был рассмотрен атом " << x << endl;
-        //else
-            //cout << "Шаг " << N << ". Был рассмотрен атом " << x << " и заменён на " << zam << endl;
-    }
-
     return new_one;
 }
 
@@ -281,21 +224,15 @@ void MainWindow::on_actionExit_triggered()
 
 void MainWindow::on_Enter_clicked()
 {
-    lisp list;
     char* arr=new char[1000];
     int i = 0;
-    QByteArray buffb = buff.toLatin1(); //че то с памятью
+    QByteArray buffb = buff.toLatin1();
     char* buffch = buffb.data();
     int length=buff.size();
-    buffch[length+1]='\0';
     analyser(buff, length);
-    read_lisp(list, buffch);
-    write_lisp(list, arr, i);
+    read_lisp(hier_list, buffch);
+    write_lisp(hier_list, arr, i);
     ui->textEdit->setText(arr);
-
-   //QList<QString> list= buff.split(" ", QString::SkipEmptyParts);
-    //int size = list.size();
-
 }
 
 
@@ -343,15 +280,11 @@ bool isAtom(const lisp s)
 
 
 lisp cons(const lisp h, const lisp t)
-// PreCondition: not isAtom (t)
 {
     lisp p = NULL;;
     if (isAtom(t))
     {
         exit(1);
-        //cout << "Error: Tail(nil) \n";
-        //system("Pause");
-        //exit(1);
     }
     else
     {
@@ -359,9 +292,6 @@ lisp cons(const lisp h, const lisp t)
         if (p == NULL)
         {
             exit(1);
-            //cout << "Memory not enough\n";
-            //system("Pause");
-            //exit(1);
         }
         else
         {
@@ -374,22 +304,18 @@ lisp cons(const lisp h, const lisp t)
 }
 
 lisp head(const lisp s)
-{// PreCondition: not null (s)
+{
     if (s != NULL)
     {
         if (!isAtom(s))
             return s->node.pair.hd;
         else
         {
-            //cout << "Error: Head(atom) \n";
-            //system("Pause");
             exit(1);
         }
     }
     else
     {
-        //cout << "Error: Head(nil) \n";
-        //system("Pause");
         exit(1);
     }
 }
@@ -400,64 +326,78 @@ bool isNull(const lisp s)
 }
 
 lisp tail(const lisp s)
-{// PreCondition: not null (s)
+{
     if (s != NULL)
     {
         if (!isAtom(s))
             return s->node.pair.tl;
         else
         {
-            cout << "Error: Tail(atom) \n";
-            system("Pause");
             exit(1);
         }
     }
     else
     {
-        cout << "Error: Tail(nil) \n";
-        system("Pause");
         exit(1);
     }
 }
+
+void destroy(lisp s)
+{
+    if (s != NULL)
+    {
+        if (!isAtom(s))
+        {
+            destroy(head(s));
+            destroy(tail(s));
+        }
+        delete s;
+        s = NULL;
+    }
+}
+
 
 int write_lisp(const lisp x, char* arr, int i)
 {
     int j=0;
     if (isNull(x)){
-        arr[i]=' ';
-        arr[i+1]='(';
+        arr[i]='(';
+        arr[i+1]=' ';
         arr[i+2]=')';
+        arr[i+3]='\0';
     }
     else
     {
         if (isAtom(x)){
-            while(x->node.atom[j]!='\0'){
-            arr[i]=x->node.atom[j];
-            i++;
-            j++;
+            while(x->node.atom[j]!='\0')
+            {
+                arr[i]=x->node.atom[j];
+                i++;
+                j++;
             }
             arr[i]=' ';
             i++;
+
         }
         else
-        { //непустой список}
+        {
+            if((i-1>0)&&(arr[i-1]==' '))
+                i--;
             arr[i]='(';
             i++;
-            arr[i]=' ';
-            i++;
             i=write_seq(x, arr, i);
+            if((i-1>0)&&(arr[i-1]==' '))
+                i--;
             arr[i]=')';
-            i++;
-            arr[i]=' ';
             i++;
             arr[i]='\0';
         }
     }
     return i;
-} // end write_lisp
-  //..............................................................................
+}
+
 int write_seq(const lisp x, char* arr, int i)
-{//выводит последовательность элементов списка без обрамляющих его скобок
+{
     if (!isNull(x))
     {
         i=write_lisp(head(x), arr, i);
@@ -466,34 +406,44 @@ int write_seq(const lisp x, char* arr, int i)
     return i;
 }
 
-//int* graph(int k, int* roads1, int* roads2, int* result, int j, int y, int towns)
-//{
-//    int t=0;
-//    for(int i=0; i<towns; i++)
-//    {
-//        if((roads1[i]==k)&&(y!=roads2[i]))
-//        {
-//            y=roads1[i];
-//            t=roads2[i];
-//            while((result[j]!=0)&&(result[j]<towns))
-//                j++;
-//            result[j]=t;
-//            j++;
-//            graph(t, roads1, roads2, result, j, y, towns);
-//        }
-//        else if((roads2[i]==k)&&(y!=roads1[i]))
-//        {
-//            y=roads2[i];
-//            t=roads1[i];
-//            while((result[j]!=0)&&(result[j]<towns))
-//                j++;
-//            result[j]=t;
-//            j++;
-//            graph(t, roads1, roads2, result, j, y, towns);
-//        }
-//    }
-//    return result;
-//}
+int change_atoms(const lisp x, const char *first_line, const char* second_line, int i)
+{
+    int j=0;
+    if (isNull(x)){
+        return 1;
+    }
+    else
+    {
+        if (isAtom(x)){
+            if(strcmp(x->node.atom, first_line)==0)
+            {
+                x->node.atom=new char[sizeof(second_line)+1];
+                while(second_line[j]!='\0')
+                {
+                    x->node.atom[j]=second_line[j];
+                    j++;
+                    i++;
+                }
+                x->node.atom[j]='\0';
+            }
+        }
+        else
+        {
+            i=change_atoms_next(x, first_line, second_line, i);
+        }
+    }
+    return i;
+}
+
+int change_atoms_next(const lisp x, const char* first_line, const char* second_line, int i)
+{
+    if (!isNull(x))
+    {
+        i=change_atoms(head(x), first_line, second_line, i);
+        i=change_atoms_next(tail(x), first_line, second_line, i);
+    }
+    return i;
+}
 
 void MainWindow::on_actionOpen_file_triggered()
 {
@@ -509,17 +459,37 @@ QString MainWindow::ReadToFile(const QString &FilePath)
     if(!input.open(QFile::ReadOnly|QFile::Text))
     {
         QMessageBox::information(this, "Error", "Path is not correct!");        
-        return buff;
+        return '\0';
     }
     QTextStream stream(&input);
     int p=input.size();
     if(p==0)
     {
         input.close();
-        return buff;
+        return '\0';
     }
     buff=stream.readAll();
+            ui->textEdit_2->setText(buff);
     input.close();
     flag=1;
     return buff;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    ui->textEdit->clear();
+    ui->textEdit_3->clear();
+    ui->textEdit_4->clear();
+}
+void MainWindow::on_pushButton_2_clicked()
+{
+    char* arr=new char[1000];
+    int i=0;
+    QString chaged_line=ui->textEdit_3->toPlainText();
+    QString new_line=ui->textEdit_4->toPlainText();
+    QByteArray b_changed_line=chaged_line.toLatin1();
+    QByteArray b_new_line=new_line.toLatin1();
+    change_atoms(hier_list, b_changed_line, b_new_line, i);
+    write_lisp(hier_list, arr, i);
+    ui->textEdit->setText(arr);
 }
