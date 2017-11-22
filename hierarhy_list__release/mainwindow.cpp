@@ -14,6 +14,7 @@ using namespace std;
 
 QString buff;
 int flag=0;
+int creation_flag=0;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -63,15 +64,15 @@ bool isAtom(const lisp s);
 bool isNull(const lisp s);
 void eliminate(lisp s);
 base getAtom(const lisp s);
-void read_lisp(lisp& list, char* buffch);
-int read_elem(char prev, lisp& list, base elem, char *buffch, int i);
-int read_seq(lisp& list, char *buffch, int i);
+void read_lisp(lisp& list, char* buffch, int length);
+int read_elem(char prev, lisp& list, base elem, char *buffch, int i, int length);
+int read_seq(lisp& list, char *buffch, int i, int length);
 int write_lisp(const lisp x, char *arr, int i);
 int write_seq(const lisp x, char *arr, int i);
 int change_atoms(const lisp x, const char* first_line, const char *second_line, int i);
 int change_atoms_next(const lisp x, const char *first_line, const char *second_line, int i);
 
-void read_lisp(lisp &list, char *buffch)
+void read_lisp(lisp &list, char *buffch, int length)
 {
     int k=0;
     bool fl1=false;
@@ -111,7 +112,7 @@ void read_lisp(lisp &list, char *buffch)
     }while(((buffch[i]!='(')&&(buffch[i]!='\0')&&(buffch[i]!=')')&&(buffch[i-1]!='(')&&(buffch[i-1]!=')'))||
            (buffch[i]==' '));
         elem[j]='\0';
-        k=read_elem(elem[j-1], list,  elem, buffch, i);
+        k=read_elem(elem[j-1], list,  elem, buffch, i, length);
         if(i<k)
             i=k;
         j=0;
@@ -121,7 +122,7 @@ void read_lisp(lisp &list, char *buffch)
 
 
 
-int read_elem(char prev, lisp& list, base elem, char* buffch, int i)
+int read_elem(char prev, lisp& list, base elem, char* buffch, int i, int length)
 {
     int j=i;
     if (prev == ')')
@@ -134,7 +135,7 @@ int read_elem(char prev, lisp& list, base elem, char* buffch, int i)
             list = make_atom(elem);
         else
         {
-            j=read_seq(list, buffch, j++);
+            j=read_seq(list, buffch, j++, length);
             if(i<j)
                 i=j;
         }
@@ -142,14 +143,14 @@ int read_elem(char prev, lisp& list, base elem, char* buffch, int i)
     return i;
 }
 
-int read_seq(lisp& list, char *buffch, int i)
+int read_seq(lisp& list, char *buffch, int i, int length)
 {
     bool fl1=false;
     bool fl2=false;
     int p=0;
     int k=0;
     int j=0;
-    base elem = new char;
+    base elem = new char[length];
     lisp part1;
     lisp part2;
     if (buffch[i]=='\0')
@@ -196,10 +197,10 @@ int read_seq(lisp& list, char *buffch, int i)
         }
         else
         {
-            p=read_elem(elem[j-1], part1, elem, buffch, i);
+            p=read_elem(elem[j-1], part1, elem, buffch, i, length);
             if(i<p)
                 i=p;
-            k=read_seq(part2, buffch, i);
+            k=read_seq(part2, buffch, i, length);
             if(i<k)
                 i=k;
             list = cons(part1, part2);
@@ -219,7 +220,11 @@ lisp make_atom(const base x)
 
 void MainWindow::on_actionExit_triggered()
 {
-    eliminate(hier_list);
+    if(creation_flag!=0)
+    {
+        eliminate(hier_list);
+        creation_flag=0;
+    }
     close();
 }
 
@@ -227,7 +232,6 @@ void MainWindow::on_Enter_clicked()
 {
     char* arr=new char[1000];
     int i = 0;
-    //int get_rdy=0;
     QByteArray buffb = buff.toLatin1();
     char* buffch = buffb.data();
     int length=buff.size();
@@ -235,8 +239,13 @@ void MainWindow::on_Enter_clicked()
         ui->textEdit->setText("Error");
         return;
     }
-    //eliminate(hier_list);
-    read_lisp(hier_list, buffch);
+    if(creation_flag!=0)
+    {
+        eliminate(hier_list);
+        creation_flag=0;
+    }
+    creation_flag=1;
+    read_lisp(hier_list, buffch, length);
     write_lisp(hier_list, arr, i);
     ui->textEdit->setText(arr);
 }
@@ -485,7 +494,11 @@ QString MainWindow::ReadToFile(const QString &FilePath)
 
 void MainWindow::on_pushButton_clicked()
 {
-    //eliminate(hier_list);
+    if(creation_flag!=0)
+    {
+        eliminate(hier_list);
+        creation_flag=0;
+    }
     ui->textEdit->clear();
     ui->textEdit_3->clear();
     ui->textEdit_4->clear();
