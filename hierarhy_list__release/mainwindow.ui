@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Roads founder</string>
+   <string>Hierarchy list</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -26,7 +26,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -86,13 +86,13 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>275</x>
       <y>11</y>
       <width>135</width>
-      <height>201</height>
+      <height>289</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0,0,0">

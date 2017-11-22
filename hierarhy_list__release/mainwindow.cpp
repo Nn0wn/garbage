@@ -52,7 +52,7 @@ typedef s_expr *lisp;
 base x1, zam;
 bool find_zam = false;
 int N = 0;
-lisp hier_list;
+lisp hier_list=NULL;
 
 int analyser(QString buffer, int length);
 lisp head(const lisp s);
@@ -61,7 +61,7 @@ lisp cons(const lisp h, const lisp t);
 lisp make_atom(const base x);
 bool isAtom(const lisp s);
 bool isNull(const lisp s);
-void destroy(lisp s);
+void eliminate(lisp s);
 base getAtom(const lisp s);
 void read_lisp(lisp& list, char* buffch);
 int read_elem(char prev, lisp& list, base elem, char *buffch, int i);
@@ -219,6 +219,7 @@ lisp make_atom(const base x)
 
 void MainWindow::on_actionExit_triggered()
 {
+    eliminate(hier_list);
     close();
 }
 
@@ -226,10 +227,15 @@ void MainWindow::on_Enter_clicked()
 {
     char* arr=new char[1000];
     int i = 0;
+    //int get_rdy=0;
     QByteArray buffb = buff.toLatin1();
     char* buffch = buffb.data();
     int length=buff.size();
-    analyser(buff, length);
+    if(analyser(buff, length)==1){
+        ui->textEdit->setText("Error");
+        return;
+    }
+    //eliminate(hier_list);
     read_lisp(hier_list, buffch);
     write_lisp(hier_list, arr, i);
     ui->textEdit->setText(arr);
@@ -238,13 +244,15 @@ void MainWindow::on_Enter_clicked()
 
 int analyser(QString buffer, int length)
 {
+    int i=0;
     QChar open_bracket;
     int elem_counter=0;
     int* temp=new int[10];
-    int lvl_counter=1;
-    if(buffer[0]!='(')
+    int lvl_counter=0;
+    while(buffer[i]==' ')
+        i++;
+    if(buffer[i]!='(')
         return 1;
-    int i=1;
     temp[0]=0;
     for(i=i; i<length; i++)
     {
@@ -262,8 +270,8 @@ int analyser(QString buffer, int length)
             lvl_counter--;
             elem_counter=temp[lvl_counter];
         }
-        if(elem_counter>2)
-            return 1;
+        //if(elem_counter>2)
+         //   return 1;
     }
     if(lvl_counter!=0)
         return 1;
@@ -342,14 +350,14 @@ lisp tail(const lisp s)
     }
 }
 
-void destroy(lisp s)
+void eliminate(lisp s)
 {
     if (s != NULL)
     {
         if (!isAtom(s))
         {
-            destroy(head(s));
-            destroy(tail(s));
+            eliminate(head(s));
+            eliminate(tail(s));
         }
         delete s;
         s = NULL;
@@ -477,6 +485,7 @@ QString MainWindow::ReadToFile(const QString &FilePath)
 
 void MainWindow::on_pushButton_clicked()
 {
+    //eliminate(hier_list);
     ui->textEdit->clear();
     ui->textEdit_3->clear();
     ui->textEdit_4->clear();
