@@ -69,8 +69,8 @@ int read_elem(char prev, lisp& list, base elem, char *buffch, int i, int length)
 int read_seq(lisp& list, char *buffch, int i, int length);
 int write_lisp(const lisp x, char *arr, int i);
 int write_seq(const lisp x, char *arr, int i);
-int change_atoms(const lisp x, const char* first_line, const char *second_line, int i);
-int change_atoms_next(const lisp x, const char *first_line, const char *second_line, int i);
+int change_atoms(const lisp x, const char* first_line, const char *second_line, int i, int length);
+int change_atoms_next(const lisp x, const char *first_line, const char *second_line, int i, int length);
 
 void read_lisp(lisp &list, char *buffch, int length)
 {
@@ -423,7 +423,7 @@ int write_seq(const lisp x, char* arr, int i)
     return i;
 }
 
-int change_atoms(const lisp x, const char *first_line, const char* second_line, int i)
+int change_atoms(const lisp x, const char *first_line, const char* second_line, int i, int length)
 {
     int j=0;
     if (isNull(x)){
@@ -434,7 +434,7 @@ int change_atoms(const lisp x, const char *first_line, const char* second_line, 
         if (isAtom(x)){
             if(strcmp(x->node.atom, first_line)==0)
             {
-                x->node.atom=new char[sizeof(second_line)+1];
+                x->node.atom=new char[length];
                 while(second_line[j]!='\0')
                 {
                     x->node.atom[j]=second_line[j];
@@ -446,18 +446,18 @@ int change_atoms(const lisp x, const char *first_line, const char* second_line, 
         }
         else
         {
-            i=change_atoms_next(x, first_line, second_line, i);
+            i=change_atoms_next(x, first_line, second_line, i, length);
         }
     }
     return i;
 }
 
-int change_atoms_next(const lisp x, const char* first_line, const char* second_line, int i)
+int change_atoms_next(const lisp x, const char* first_line, const char* second_line, int i, int length)
 {
     if (!isNull(x))
     {
-        i=change_atoms(head(x), first_line, second_line, i);
-        i=change_atoms_next(tail(x), first_line, second_line, i);
+        i=change_atoms(head(x), first_line, second_line, i, length);
+        i=change_atoms_next(tail(x), first_line, second_line, i, length);
     }
     return i;
 }
@@ -511,7 +511,8 @@ void MainWindow::on_pushButton_2_clicked()
     QString new_line=ui->textEdit_4->toPlainText();
     QByteArray b_changed_line=chaged_line.toLatin1();
     QByteArray b_new_line=new_line.toLatin1();
-    change_atoms(hier_list, b_changed_line, b_new_line, i);
+    int length=b_new_line.size();
+    change_atoms(hier_list, b_changed_line, b_new_line, i, length);
     write_lisp(hier_list, arr, i);
     ui->textEdit->setText(arr);
 }
