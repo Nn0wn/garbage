@@ -109,7 +109,8 @@ void read_lisp(lisp &list, char *buffch, int length)
             else
                 i++;
         }
-    }while(((buffch[i]!='(')&&(buffch[i]!='\0')&&(buffch[i]!=')')&&(buffch[i-1]!='(')&&(buffch[i-1]!=')'))||
+    }
+    while(((buffch[i]!='(')&&(buffch[i]!='\0')&&(buffch[i]!=')')&&(buffch[i-1]!='(')&&(buffch[i-1]!=')'))||
            (buffch[i]==' '));
         elem[j]='\0';
         k=read_elem(elem[j-1], list,  elem, buffch, i, length);
@@ -188,7 +189,8 @@ int read_seq(lisp& list, char *buffch, int i, int length)
                 else
                     i++;
             }
-        }while(((buffch[i]!='(')&&(buffch[i]!='\0')&&(buffch[i]!=')')&&(buffch[i-1]!='(')&&(buffch[i-1]!=')'))||
+        }
+        while(((buffch[i]!='(')&&(buffch[i]!='\0')&&(buffch[i]!=')')&&(buffch[i-1]!='(')&&(buffch[i-1]!=')'))||
                (buffch[i]==' '));
         elem[j]='\0';
         if (elem[j-1] == ')'){
@@ -214,7 +216,7 @@ lisp make_atom(const base x)
     lisp new_one = NULL;
     new_one = new s_expr;
     new_one->tag = true;
-        new_one->node.atom = x;
+    new_one->node.atom = x;
     return new_one;
 }
 
