@@ -63,6 +63,8 @@ int analyser(QString buffer, int length)
         }
         if(elem_counter>2)
             return 1;
+        if((elem_counter>1)&&(lvl_counter==1))
+            return 1;
     }
     if(lvl_counter!=0)
         return 1;
