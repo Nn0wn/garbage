@@ -126,11 +126,11 @@ QString MainWindow::ReadToFile(const QString &FilePath)
     }
     QTextStream stream(&input);
     int p=input.size();
-    if(p==0)
-    {
-        input.close();
-        return '\0';
-    }
+    //if(p==0)
+    //{
+    //    input.close();
+    //    return '\0';
+    //}
     buff=stream.readAll();
             ui->textEdit_2->setText(buff);
     input.close();
