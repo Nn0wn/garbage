@@ -319,3 +319,27 @@ void MainWindow::on_pushButton_3_clicked()
         temp->show();
     }
 }
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    ui->textEdit_3->clear();
+    if(ui->textEdit_2->toPlainText()=="")
+    {
+        ui->textEdit_3->setPlainText("No info");
+        return;
+    }
+    QString points_arr=ui->textEdit_2->toPlainText();
+    QStringList points_arr_l=points_arr.split(" ", QString::SkipEmptyParts);
+    BT* temp=Find(tree, points_arr_l.first().toInt());
+    if(temp!=nullptr)
+    {
+        ui->textEdit_3->insertPlainText(temp->info);
+        return;
+    }
+    else
+    {
+        ui->textEdit_3->setText("ERROR, no such element");
+        return;
+    }
+}
+
