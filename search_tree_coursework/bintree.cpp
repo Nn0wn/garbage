@@ -21,6 +21,8 @@ bool NullBT(BT* tree){
 
 void fixRoots(BT* tree, BT* past)
 {
+    if(NullBT(tree))
+        return;
     if (!NullBT(past)){
         tree->Root=past;
     }
@@ -173,114 +175,24 @@ BT* insertrand(BT* tree, BT *root, int key, QString key_ch)
     return tree;
 }
 
-//BT* delet(BT* tree, int key)
-//{
-//    BT* temp;
-//    if(!tree)
-//        return nullptr;
-//    if(tree->key==key)
-//    {
-//        if(tree->Right==nullptr)
-//        {
-//            if(tree->Left==nullptr)
-//            {
-//                if(tree->Root==nullptr)
-//                    return nullptr;
-//            }
-//            else
-//            {
-//                if(tree->Root==nullptr)
-//                {
-//                    tree=tree->Left;
-//                    delete tree->Root;
-//                    tree->Root=nullptr;
-//                    return tree;
-//                }
-//                else
-//                {
-//                    BT* temp=tree->Left;
-//                    tree=tree->Root;
-//                    delete temp->Root;
-//                    temp->Root=tree;
-//                    tree->Left=temp;
-//                    return tree;
-//                }
-//            }
-//        }
-//        else
-//        {
-//            if(tree->Right->Left==nullptr)
-//            {
-//                if(tree->Root==nullptr)
-//                {
-//                    if(tree->Left==nullptr)
-//                    {
-//                        tree=tree->Right;
-//                        delete tree->Root;
-//                        tree->Root=nullptr;
-//                        return tree;
-//                    }
-//                    else
-//                    {
-//                        temp=tree->Left;
-//                        tree=tree->Right;
-//                        delete tree->Root;
-//                        tree->Root=nullptr;
-//                        tree->Left=temp;
-//                        return tree;
-//                    }
-//                }
-//                else
-//                {
-//                    if(tree->Left==nullptr)
-//                    {
-//                        temp=tree->Right;
-//                        tree=tree->Root;
-//                        delete temp->Root;
-//                        temp->Root=tree;
-//                        tree->Right=temp;
-//                        return tree;
-//                    }
-//                    else
-//                    {
-//                        tree->Right->Left=tree->Left;
-//                        tree->Left->Root=tree->Right->Left;
-//                        temp=tree->Right;
-//                        tree=tree->Root;
-//                        delete temp->Root;
-//                        temp->Root=tree;
-//                        tree->Left=temp;
-//                        return tree;
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                tree->Right->Left->Left=tree->Left;
-//                tree->Right->Left->Right=tree->Right;
-//                tree->Right->Root=tree->Right->Left;
-//                temp=tree->Left;
-//                tree->Right->Left->Root=tree->Root;
-//                tree=tree->Root;
-//                tree->Left=tree->Left->Right->Left;
-//                delete temp->Root;
-//                temp->Root=tree->Left;
-//                return tree;
-//            }
-//        }
-//    }
-//    if(tree->key>key)
-//        delet(tree->Left, key);
-//    if(tree->key<key)
-//        delet(tree->Right, key);
-//}
-
 BT* merge(BT* tree1, BT* tree2)
 {
-    if(!tree1)
+    if(!tree1&&!tree2)
+        return nullptr;
+    if(!tree1&&tree2->Root->Root!=nullptr)
         return tree2;
-    if(!tree2)
+    if(!tree1)
+    {
+        tree2->Root=nullptr;
+        return tree2;
+    }
+    if(!tree2&&tree1->Root->Root!=nullptr)
         return tree1;
+    if(!tree2)
+    {
+        tree1->Root=nullptr;
+        return tree1;
+    }
     if(rand()%(tree1->size+tree2->size) < tree1->size )
     {
         tree1->Right = merge(tree1->Right,tree2);

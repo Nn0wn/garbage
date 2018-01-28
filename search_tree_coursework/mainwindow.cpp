@@ -209,8 +209,15 @@ void MainWindow::on_action_7_triggered()
 
 void MainWindow::on_action_5_triggered()
 {
+   int i=0;
    tree=delete_tree(tree);
-   ui->tableWidget->clear();
+   ui->tableWidget->clearContents();
+   while(ui->tableWidget->rowCount()!=0)
+   {
+       ui->tableWidget->removeRow(0);
+       i++;
+   }
+
    QString fileName = QFileDialog::getOpenFileName(this, "Open file");
    tree = ReadFile(fileName, ui->textEdit, ui->tableWidget);
    ui->action_3->setEnabled(true);
@@ -283,12 +290,25 @@ void MainWindow::on_checkBox_clicked()
 
 void MainWindow::on_pushButton_clicked()
 {
+    //int i=0;
     int point_i;
     QString point;
     point=ui->textEdit_4->toPlainText();
     point_i=point.toInt();
     tree=remove(tree, point_i);
-    ui->tableWidget->removeRow(point_i-1);
+    QTableWidgetItem* widg_i=new QTableWidgetItem;
+    QTableWidgetItem* new_widg_i=new QTableWidgetItem(point);
+//    while(i<ui->tableWidget->rowCount())
+//    {
+//        widg_i=ui->tableWidget->takeItem(i, 0);
+//        if(new_widg_i==widg_i)
+//        {
+//            ui->tableWidget->removeRow(i);
+//            i=ui->tableWidget->rowCount();
+//        }
+//        i++;
+//    }
+    //int row_n=ui->tableWidget->row(new_widg_i);
     fixRoots(tree, nullptr);
     if(tree!=nullptr)
     {
@@ -342,4 +362,3 @@ void MainWindow::on_pushButton_2_clicked()
         return;
     }
 }
-
