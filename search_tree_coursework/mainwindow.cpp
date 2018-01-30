@@ -73,32 +73,40 @@ bool gravity = false;
 //    return 0;
 //}
 
-//int analyser(QString str, int k)
-//{
-//    bool flag=false;
-//    while(str[k]!='\0')
-//    {
-//        if(str[k]==" ")
-//        {
-//            flag=false;
-//            k++;
-//        }
-//        if(str[k]>='0'&&str[k]<='9'&&(flag==false))
-//            return 1;
-//        else
-//            k++;
-//        if(str[k]==';')
-//        {
-//            flag=true;
-//            k++;
-//        }
-//        if(str[k]>='0'&&str[k]<='9'&&(flag==true))
-//            k++;
-//        else
-//            return 1;
-//    }
-//    return 0;
-//}
+int analyser(QString str, int k)
+{
+    bool flag_dotcom=false;
+    bool flag_num=false;
+    while(str[k]!='\0')
+    {
+        while(str[k]==" ")
+        {
+            flag_dotcom=false;
+            flag_num=false;
+            k++;
+        }
+        while(str[k]!=";")
+            k++;
+        if(str[k]==';')
+        {
+            flag_dotcom=true;
+            k++;
+        }
+        while(str[k]>='0'&&str[k]<='9'&&(flag_dotcom==true))
+        {
+            flag_num=true;
+            k++;
+        }
+        if(str[k]==" ")
+            k++;
+        else
+            return 1;
+    }
+    if(flag_dotcom==false || flag_num==false)
+        return 1;
+    else
+        return 0;
+}
 
 int strsize(QString str)
 {
@@ -113,7 +121,7 @@ int strsize(QString str)
     return size;
 }
 
-BT* Read(QString str, int i, QTableWidget* tw){
+BT* Read_strict(QString str, int i, QTableWidget* tw){
     int j=0;
     //QStringList str_l=str.split(" ", QString::SkipEmptyParts);
     QByteArray str_b=str.toLatin1();
@@ -142,11 +150,51 @@ BT* Read(QString str, int i, QTableWidget* tw){
         tw->setItem(i, 0, new QTableWidgetItem(arr_ch2[i]));
         tw->setItem(i, 1, new QTableWidgetItem(arr_ch[i]));
     }
-    i=0;
+    //i=0;
     tree=insertrand(tree, NULL, arr[0], arr_ch[0]);
     for((i)=1; (i)<str_size; (i)++)
     {
         tree=insertrand(tree, NULL, arr[i], arr_ch[i]);
+    }
+    fixRoots(tree, nullptr);
+    return tree;
+}
+
+BT* Read_free(QString str, int i, QTableWidget* tw){
+    int j=0;
+    QStringList str_l=str.split(" ", QString::SkipEmptyParts);
+    QString str_i;
+//    QByteArray str_b=str.toLatin1();
+//    char* str_ch=str_b.data();
+//    int str_size=strsize(str)+1;
+    //QString* arr_ch2=new QString[str_size+1];
+//    QString* arr_ch=new QString[str_size+1];
+//    int* arr=new int[str_size];
+//    char* end=strtok(str_ch, " ;");
+//    while(end!=NULL)
+//    {
+//        QString end_s(end);
+//        arr_ch[i]=end_s;
+//        i++;
+//        end=strtok(NULL, " ;");
+//        QString end_s2(end);
+//        arr_ch[i]=end_s2;
+//        arr_ch2[j]=arr_ch[i];
+//        arr[j]=arr_ch[i].toInt();
+//        j++;
+//        end=strtok(NULL, " ;");
+//    }
+    for(i=0; i<str_l.size(); i++)
+    {
+        tw->insertRow(i);
+        tw->setItem(i, 0, new QTableWidgetItem(str_i.number(i)));
+        tw->setItem(i, 1, new QTableWidgetItem(str_l[i]));
+    }
+    //i=0;
+    tree=insertrand(tree, NULL, 0, str_l[0]);
+    for(i=1; i<str_l.size(); i++)
+    {
+        tree=insertrand(tree, NULL, i, str_l[i]);
     }
     fixRoots(tree, nullptr);
     return tree;
@@ -171,7 +219,10 @@ BT* ReadFile(QString fileName, QTextEdit* te, QTableWidget* tw){
 //        return nullptr;
 //    }
     te->setPlainText(temp);
-    return Read(temp, i, tw);
+    if(analyser(temp, i)==0)
+        return Read_strict(temp, i, tw);
+    else
+        return Read_free(temp, i, tw);
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -290,25 +341,23 @@ void MainWindow::on_checkBox_clicked()
 
 void MainWindow::on_pushButton_clicked()
 {
-    //int i=0;
+    int i=0;
     int point_i;
     QString point;
     point=ui->textEdit_4->toPlainText();
     point_i=point.toInt();
     tree=remove(tree, point_i);
     QTableWidgetItem* widg_i=new QTableWidgetItem;
-    QTableWidgetItem* new_widg_i=new QTableWidgetItem(point);
-//    while(i<ui->tableWidget->rowCount())
-//    {
-//        widg_i=ui->tableWidget->takeItem(i, 0);
-//        if(new_widg_i==widg_i)
-//        {
-//            ui->tableWidget->removeRow(i);
-//            i=ui->tableWidget->rowCount();
-//        }
-//        i++;
-//    }
-    //int row_n=ui->tableWidget->row(new_widg_i);
+    while(i<ui->tableWidget->rowCount())
+    {
+        widg_i=ui->tableWidget->item(i,0);
+        if(point==widg_i->data(0))
+        {
+            ui->tableWidget->removeRow(i);
+            i=ui->tableWidget->rowCount();
+        }
+        i++;
+    }
     fixRoots(tree, nullptr);
     if(tree!=nullptr)
     {

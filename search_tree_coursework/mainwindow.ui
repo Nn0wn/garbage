@@ -54,6 +54,9 @@
     </property>
    </widget>
    <widget class="QTextEdit" name="textEdit_3">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -61,6 +64,9 @@
       <width>241</width>
       <height>23</height>
      </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
