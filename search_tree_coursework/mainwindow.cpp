@@ -79,25 +79,25 @@ int analyser(QString str, int k)
     bool flag_num=false;
     while(str[k]!='\0')
     {
+        flag_dotcom=false;
+        flag_num=false;
         while(str[k]==" ")
-        {
-            flag_dotcom=false;
-            flag_num=false;
             k++;
-        }
-        while(str[k]!=";")
+        while(str[k]!=";" && str[k]!=" " && k<str.size())
             k++;
         if(str[k]==';')
         {
             flag_dotcom=true;
             k++;
         }
-        while(str[k]>='0'&&str[k]<='9'&&(flag_dotcom==true))
+        else
+            return 1;
+        while(str[k]>='0'&&str[k]<='9'&&(flag_dotcom==true) && k<str.size())
         {
             flag_num=true;
             k++;
         }
-        if(str[k]==" ")
+        if(str[k]==" " || k==str.size())
             k++;
         else
             return 1;
@@ -110,12 +110,18 @@ int analyser(QString str, int k)
 
 int strsize(QString str)
 {
+    bool flag=false;
     int size=0;
     int i=0;
     while(i<str.size())
     {
-        if(str[i]==' ')
+        if(str[i]!=' ' && flag!=true)
+        {
+            flag=true;
             size++;
+        }
+        if(str[i]==" ")
+            flag=false;
         i++;
     }
     return size;
@@ -126,7 +132,7 @@ BT* Read_strict(QString str, int i, QTableWidget* tw){
     //QStringList str_l=str.split(" ", QString::SkipEmptyParts);
     QByteArray str_b=str.toLatin1();
     char* str_ch=str_b.data();
-    int str_size=strsize(str)+1;
+    int str_size=strsize(str);
     QString* arr_ch2=new QString[str_size+1];
     QString* arr_ch=new QString[str_size+1];
     int* arr=new int[str_size];
