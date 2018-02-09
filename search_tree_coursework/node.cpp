@@ -141,8 +141,8 @@ void Node::calculateForces()
 //! [6]
     QRectF sceneRect = scene()->sceneRect();
     newPos = pos() + QPointF(xvel, yvel);
-    newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 10), sceneRect.right() - 10));
-    newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 10), sceneRect.bottom() - 10));
+    newPos.setX(qMin(qMax(newPos.x(), sceneRect.left() + 100), sceneRect.right() - 100));
+    newPos.setY(qMin(qMax(newPos.y(), sceneRect.top() + 100), sceneRect.bottom() - 100));
 }
 //! [6]
 
@@ -168,7 +168,7 @@ QRectF Node::boundingRect() const
                        *mult*text.size() + adjust, 23 + adjust);
     return QRectF( -(mult*text.size()) - adjust, -10 - adjust, 2*mult*text.size() + adjust, 23 + adjust);
 }
-//! [8]
+//! [8]elements and text size
 
 //! [9]
 QPainterPath Node::shape() const

@@ -116,7 +116,7 @@ BT* rotateright(BT* tree)
     child->Right=tree;
     child->size=tree->size;
     fixsize(tree);
-    //fixsize(child);
+    fixsize(child);
     return child;
 }
 
@@ -130,8 +130,8 @@ BT* rotateleft(BT* tree)
     tree->Root=child;
     child->Left=tree;
     child->size=tree->size;
-    //fixsize(child);
     fixsize(tree);
+    fixsize(child);
     return child;
 }
 

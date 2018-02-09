@@ -34,11 +34,13 @@ int* analyser(QString str, int k, int* arr)
             k++;
         }
         if(str[k]==";")
+        {
             flag_dotcom=true;
-        k++;
+            k++;
+        }
         if(str[k]<'0' || str[k]>'9')
             flag_num=false;
-        while(/*str[k]>='0' && str[k]<='9'*/str[k]!=" " && str[k]!='\0')
+        while(str[k]!=" " && str[k]!='\0')
         {
             if(str[k]<'0' || str[k]>'9')
                 flag_num=false;
@@ -52,6 +54,8 @@ int* analyser(QString str, int k, int* arr)
             j++;
         }
         i++;
+        while(str[k]==" ")
+            k++;
     }
     temp=new int[j];
     for(i=0;i<j;i++)
@@ -84,97 +88,125 @@ int strsize(QString str)
 }
 
 BT* Read(QString str, int i, QTableWidget* tw, int* without_nums){
-    int j=0, k=0, t=0;
+    int j=0, k=0, t=0, p=0;
     int *arr;
     int str_size=strsize(str)+1;
     arr=new int[str_size];
     QStringList str_l=str.split(" ", QString::SkipEmptyParts);
     QString str_i, str_new;
-    for(i=i;i<str_l.size();i++)
+    if(without_nums[str_l.size()]!=-1)
     {
-        while(i==without_nums[k] && without_nums[k]!=-1)
+        for(i=i;i<str_l.size();i++)
         {
-            i++;
-            k++;
-        }
-        QByteArray str_b=str_l.at(i).toLatin1();
-        char* str_ch=str_b.data();
-        QString arr_ch2;
-        QString arr_ch;
-        char* end=strtok(str_ch, " ;");
-        while(end!=NULL)
-        {
-            QString end_s(end);
-            arr_ch=end_s;
-            end=strtok(NULL, " ;");
-            QString end_s2(end);
-            arr_ch2=end_s2;
-            arr[j]=arr_ch2.toInt();
-            end=strtok(NULL, " ;");
-        }
-        tw->insertRow(j);
-        tw->setItem(j, 0, new QTableWidgetItem(arr_ch2));
-        tw->setItem(j, 1, new QTableWidgetItem(arr_ch));
-        j++;
-    }
-    for(i=0; i<str_l.size(); i++)
-    {
-        while(i!=without_nums[t])
-            i++;
-        t++;
-        str_new=str_l[i];
-        for(int p=0; p<str_new.size(); p++)
-            if(str_new[p]==";")
-                str_new.truncate(p);
-        int numb=0;
-        for(int p=0; p<j; p++)
-        {
-            if(numb==arr[p])
+            while(i==without_nums[k] && without_nums[k]!=-1 && i<str_l.size())
             {
-                numb++;
-                p=-1;
+                i++;
+                k++;
             }
+            if(i>=str_l.size())
+                break;
+            QByteArray str_b=str_l.at(i).toLatin1();
+            char* str_ch=str_b.data();
+            QString arr_ch2;
+            QString arr_ch;
+            char* end=strtok(str_ch, " ;");
+            while(end!=NULL)
+            {
+                QString end_s(end);
+                arr_ch=end_s;
+                end=strtok(NULL, " ;");
+                QString end_s2(end);
+                arr_ch2=end_s2;
+                arr[j]=arr_ch2.toInt();
+                end=strtok(NULL, " ;");
+            }
+            tw->insertRow(j);
+            tw->setItem(j, 0, new QTableWidgetItem(arr_ch2));
+            tw->setItem(j, 1, new QTableWidgetItem(arr_ch));
+            if(j<str_size)
+                j++;
         }
-        arr[j]=numb;
-        tw->insertRow(j);
-        tw->setItem(j, 0, new QTableWidgetItem(str_i.number(numb)));
-        tw->setItem(j, 1, new QTableWidgetItem(str_new));
-        j++;
-        arr[j]=-1;
-        if(t>=k)
-            i=str_l.size();
     }
-    k=0;
-    int p=0;
-    for(i=0;i<str_l.size();i++)
+    if(without_nums[0]!=-1)
     {
-        while(i==without_nums[k])
+        for(i=0; i<str_l.size(); i++)
         {
-            i++;
-            k++;
+            while(i!=without_nums[t] && i<str_l.size())
+                i++;
+            if(without_nums[t]!=-1)
+            t++;
+            if(i>=str_l.size())
+                break;
+            str_new=str_l[i];
+            for(p=0; p<str_new.size(); p++)
+                if(str_new[p]==";")
+                    str_new.truncate(p);
+            int numb=0;
+            for(p=0; p<j; p++)
+            {
+                if(numb==arr[p])
+                {
+                    numb++;
+                    p=-1;
+                }
+            }
+            arr[j]=numb;
+            tw->insertRow(j);
+            tw->setItem(j, 0, new QTableWidgetItem(str_i.number(numb)));
+            tw->setItem(j, 1, new QTableWidgetItem(str_new));
+            if(j<str_size)
+                j++;
+            arr[j]=-1;
+            if(t>=k && k!=0)
+                i=str_l.size();
         }
-        str_new=str_l[i];
-        for(j=0;j<str_new.size();j++)
-            if(str_new[j]==";")
-                str_new.truncate(j);
-        tree=insertrand(tree, NULL, arr[p], str_new);
-        p++;
     }
     k=0;
-    for(i=0;i<str_l.size();i++)
+    p=0;
+    if(without_nums[str_l.size()]!=-1)
     {
-        while(i!=without_nums[k] && without_nums[k]!=-1)
-            i++;
-        k++;
-        str_new=str_l[i];
-        for(j=0;j<str_new.size();j++)
-            if(str_new[j]==";")
-                str_new.truncate(j);
-        tree=insertrand(tree, NULL, arr[p], str_new);
-        if(without_nums[k]==-1)
-            i=str_l.size();
-        p++;
+        for(i=0;i<str_l.size();i++)
+        {
+            while(i==without_nums[k] && without_nums[k]!=-1)
+            {
+                i++;
+                k++;
+            }
+            if(i>=str_l.size())
+                break;
+            str_new=str_l[i];
+            for(j=0;j<str_new.size();j++)
+                if(str_new[j]==";")
+                    str_new.truncate(j);
+            tree=insertrand(tree, NULL, arr[p], str_new);
+            if(p<str_size)
+                p++;
+        }
     }
+    k=0;
+    if(without_nums[0]!=-1)
+    {
+        for(i=0;i<str_l.size();i++)
+        {
+            while(i!=without_nums[k])
+                i++;
+            if(without_nums[k]!=-1)
+            k++;
+            if(i>=str_l.size())
+                break;
+            str_new=str_l[i];
+            for(j=0;j<str_new.size();j++)
+                if(str_new[j]==";")
+                    str_new.truncate(j);
+            tree=insertrand(tree, NULL, arr[p], str_new);
+            if(without_nums[k]==-1)
+                i=str_l.size();
+            if(p<str_size)
+                p++;
+        }
+    }
+    //delete []without_nums;
+    delete []arr;
     fixRoots(tree, nullptr);
     return tree;
 }
@@ -337,13 +369,19 @@ void MainWindow::on_pushButton_clicked()
         QMainWindow* temp = new QMainWindow;
         temp->setCentralWidget(widget);
         temp->setWindowTitle("Graph output");
-        temp->show();
+        //temp->show();
     }
 }
 
 void MainWindow::on_pushButton_3_clicked()
 {
     QString element=ui->textEdit_5->toPlainText();
+    int* arr=new int[strsize(element)+1];
+    if(analyser(element, 0, arr)[0]!=-1)
+    {
+        ui->textEdit_3->setPlainText("You entered wrong element");
+        return;
+    }
     QStringList list=element.split(";", QString::SkipEmptyParts);
     tree=insertrand(tree, nullptr, list[1].toInt(), list[0]);
     fixRoots(tree, nullptr);
