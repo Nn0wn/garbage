@@ -57,14 +57,15 @@ int* analyser(QString str, int k, int* arr)
         while(str[k]==" ")
             k++;
     }
-    temp=new int[j];
-    for(i=0;i<j;i++)
-        temp[i]=arr[i];
-    temp[j]=-1;
-    delete []arr;
-    arr=temp;
-    temp=0;
-    delete temp;
+//    temp=new int[j];
+//    for(i=0;i<j;i++)
+//        temp[i]=arr[i];
+//    temp[j]=-1;
+//    delete []arr;
+//    arr=temp;
+//    temp=0;
+//    delete temp;
+    arr[j]=-1;
     return arr;
 }
 
@@ -363,14 +364,14 @@ void MainWindow::on_pushButton_clicked()
         i++;
     }
     fixRoots(tree, nullptr);
-    if(tree!=nullptr)
+    /*if(tree!=nullptr)
     {
         GraphWidget *widget = new GraphWidget(this, tree, &gravity);
         QMainWindow* temp = new QMainWindow;
         temp->setCentralWidget(widget);
         temp->setWindowTitle("Graph output");
         //temp->show();
-    }
+    }*/
 }
 
 void MainWindow::on_pushButton_3_clicked()
@@ -389,14 +390,14 @@ void MainWindow::on_pushButton_3_clicked()
     ui->tableWidget->insertRow(rows);
     ui->tableWidget->setItem(rows, 0, new QTableWidgetItem(list[1]));
     ui->tableWidget->setItem(rows, 1, new QTableWidgetItem(list[0]));
-    if(tree!=nullptr)
+    /*if(tree!=nullptr)
     {
         GraphWidget *widget = new GraphWidget(this, tree, &gravity);
         QMainWindow* temp = new QMainWindow;
         temp->setCentralWidget(widget);
         temp->setWindowTitle("Graph output");
         temp->show();
-    }
+    }*/
 }
 
 void MainWindow::on_pushButton_2_clicked()
