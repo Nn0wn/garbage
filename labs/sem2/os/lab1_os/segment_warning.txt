@@ -1,0 +1,2 @@
+LINK : warning L4045: name of output file is 'comfile.com'
+LINK : fatal error L1127: far segment reference not allowd with /TINY
