@@ -169,6 +169,18 @@ BT* ReadFile(QString fileName, QTextEdit* te){
     temp=corrector(temp);
     INCTR* peaks = new INCTR[peaks_i];
     peaks=Read(temp, peaks);
+    for(int k=0; k<peaks_i; k++)
+    {
+        te2->setPlainText(peaks[i].name);
+        INCTR*temp=new INCTR;
+        temp=&peaks[i];
+        while(temp->next)
+        {
+            te->append(temp->next->name);
+            temp=temp->next;
+        }
+        te2->setPlainText("\n");
+    }
     BT* temp_tree=new BT;
     //for(int k=0; k<peaks[0].name.size(); k++)
     temp_tree->info=peaks[0].name;
