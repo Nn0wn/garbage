@@ -114,42 +114,68 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
             }
         }
     }
-    for(int j=0; j<size; j++)
+    if(gampath==nullptr)
     {
-        if(tree[j].next)
+        for(int j=0; j<size; j++)
         {
-            INCTR* temp=tree[j].next;
-            if(gampath!=nullptr)
+            if(tree[j].next)
             {
-            for(int i=0; i<size-2; i++)
-                {
-                    if((tree[j].turn==gampath[i] && temp->turn==gampath[i+1]) || (temp->turn==gampath[i] && tree[j].turn==gampath[i+1])
-                            || (tree[j].turn==gampath[0] && temp->turn==gampath[size-1]) || (tree[j].turn==gampath[size-1] && temp->turn==gampath[0]))
-                        scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), true)));
-                    else
-                        scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
-                    while(temp->next)
-                    {
-                        temp=temp->next;
-                        if((tree[j].turn==gampath[i] && temp->turn==gampath[i+1]) || (temp->turn==gampath[i] && tree[j].turn==gampath[i+1])
-                                || (tree[j].turn==gampath[0] && temp->turn==gampath[size-1]) || (tree[j].turn==gampath[size-1] && temp->turn==gampath[0]))
-                            scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), true)));
-                        else
-                            scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
-                    }
-                }
-            }
-            else
-            {
+                INCTR* temp=tree[j].next;
                 scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
                 while(temp->next)
                 {
                     temp=temp->next;
-                    scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                        scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
                 }
             }
         }
     }
+    else
+    {
+        int add=5;
+        for(int j=0; j<size; j++)
+        {
+            for(int i=0; i<size-1; i++)
+            {
+                if(tree[j].next)
+                {
+                    INCTR* temp=tree[j].next;
+                    {
+                        if((tree[j].turn==gampath[i] && temp->turn==gampath[i+1]) /*|| (tree[j].turn==gampath[i+1] && temp->turn==gampath[i])*/
+                                /*|| (tree[j].turn==gampath[0] && temp->turn==gampath[size-1])*/ || (tree[j].turn==gampath[size-1] && temp->turn==gampath[0])){
+    //                        if((tree[j].turn==gampath[i] && temp->turn==gampath[i+1]) || /*(tree[j].turn==gampath[i+1] && temp->turn==gampath[i])*/
+    //                                /*|| (tree[j].turn==gampath[0] && temp->turn==gampath[size-1]) ||*/ (tree[j].turn==gampath[size-1] && temp->turn==gampath[0]))
+                            while(add!=0)
+                            {
+                            scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), true)));
+                            add--;
+                            }
+                            add=5;
+                        }
+                        else
+                            scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                        while(temp->next)
+                        {
+                            temp=temp->next;
+                            if((tree[j].turn==gampath[i] && temp->turn==gampath[i+1]) /*|| (tree[j].turn==gampath[i+1] && temp->turn==gampath[i])*/
+                                    /*|| (tree[j].turn==gampath[0] && temp->turn==gampath[size-1])*/ || (tree[j].turn==gampath[size-1] && temp->turn==gampath[0])){
+                                while(add!=0)
+                                {
+                                scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), true)));
+                                add--;
+                                }
+                                add=5;
+                            }
+                            else
+                                scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
 //    //стрелки
 //    if ((tree->prev)){
 //        scene->addItem(new Edge(tree->node, tree->prev->node, true));

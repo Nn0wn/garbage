@@ -69,7 +69,7 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
                         flag=false;
                         gampath[circle][step]=temp->turn;
                         //if(step<peaks_i-1)
-                            step++;
+                        step++;
                         gampath=Gamilton(genparent, &tree[j], peaks_i, step, circle, gampath);
                         step=gampath[/*circle*/0][peaks_i+2];
                         circle=gampath[/*circle*/0][peaks_i+1];
@@ -84,7 +84,7 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
                     circle++;
 //                    if(temp->next)
 //                    {
-                        //gampath[circle]=new int[peaks_i+10];
+                        gampath[circle]=new int[peaks_i+10];
                         for(int i=0; i<step-1; i++)
                             gampath[circle][i]=gampath[circle-1][i];
 //                    }
@@ -105,7 +105,7 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
                             circle++;
 //                            if(temp->next)
 //                            {
-                                //gampath[circle]=new int[peaks_i+10];
+                                gampath[circle]=new int[peaks_i+10];
                                 for(int i=0; i<step-1; i++)
                                     gampath[circle][i]=gampath[circle-1][i];
 //                            }
@@ -408,10 +408,11 @@ void MainWindow::on_pushButton_clicked()
 {
     int step=1, circle=0, i=0;
     int** gampath=new int*[100];
-    for(i=0; i<Factor(peaks_i); i++)
+    for(i=0; i<log(Factor(peaks_i)); i++)
     {
-
+        gampath[i]=nullptr;
         gampath[i]=new int[100];
+
     }
     if(GhouilaHouriCheck(tree, peaks_i)!=0)
     {
@@ -431,26 +432,38 @@ void MainWindow::on_pushButton_clicked()
         while(gampath[circle] && gampath[circle][peaks_i]==-1)
             circle++;
     }
-    //gampath[circle]=NULL;
+    gampath[circle]=NULL;
     ui->textEdit_3->clear();
     for(int i=0; i<circle-1; i++)
     {
-        ui->textEdit_2->append(QString::number(i+1)+')');
+        ui->textEdit_2->append(QString::number(i+1)+')'+'\t'+'|');
         for(int j=0; j<peaks_i; j++)
         {
             for(int k=0; k<peaks_i; k++)
             {
                 if(gampath[i][j]==tree[k].turn)
-                    ui->textEdit_2->insertPlainText(QString::number(tree[k].turn));
+                    ui->textEdit_2->insertPlainText(QString::number(tree[k].turn)+'|');
             }
         }
         ui->textEdit_2->append((QString)'\n');
     }
-    GraphWidget *widget = new GraphWidget(this, tree, &gravity, peaks_i, gampath[3]);
-    QMainWindow* temp = new QMainWindow;
-    temp->setCentralWidget(widget);
-    temp->setWindowTitle("Graph output");
-    temp->show();
+    if(ui->textEdit_4->toPlainText()!="")
+    {
+        int chosen_circ = ui->textEdit_4->toPlainText().toInt();
+        if(chosen_circ<circle)
+        {
+            GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, gampath[chosen_circ-1]);
+            QMainWindow* temp = new QMainWindow;
+            temp->setCentralWidget(widget);
+            temp->setWindowTitle("Graph output");
+            temp->show();
+        }
+        else
+        {
+            ui->textEdit_2->setText("Wrong cycle");
+            return;
+        }
+    }
 }
 
 //void MainWindow::on_pushButton_clicked()

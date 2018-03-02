@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
+    <width>601</width>
     <height>230</height>
    </rect>
   </property>
@@ -43,9 +43,9 @@
    <widget class="QCheckBox" name="checkBox">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>160</y>
-      <width>211</width>
+      <x>11</x>
+      <y>163</y>
+      <width>60</width>
       <height>17</height>
      </rect>
     </property>
@@ -60,7 +60,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>115</y>
       <width>311</width>
       <height>23</height>
      </rect>
@@ -73,7 +73,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>100</y>
+      <y>95</y>
       <width>141</width>
       <height>16</height>
      </rect>
@@ -85,9 +85,9 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>240</x>
+      <x>210</x>
       <y>160</y>
-      <width>75</width>
+      <width>111</width>
       <height>23</height>
      </rect>
     </property>
@@ -118,6 +118,29 @@
      <string>Gamilton cycles</string>
     </property>
    </widget>
+   <widget class="QTextEdit" name="textEdit_4">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>160</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>140</y>
+      <width>141</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Gamilton cycle</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -125,7 +148,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>617</width>
+     <width>601</width>
      <height>21</height>
     </rect>
    </property>
