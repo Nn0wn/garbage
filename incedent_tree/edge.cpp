@@ -59,7 +59,7 @@ static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 
 //! [0]
-Edge::Edge(Node *sourceNode, Node *destNode, bool vis)
+Edge::Edge(Node *sourceNode, Node *destNode, bool vis, int size_source, int size_dest, bool gamilt_colour)
     : arrowSize(10)
 {
     setAcceptedMouseButtons(0);
@@ -68,8 +68,9 @@ Edge::Edge(Node *sourceNode, Node *destNode, bool vis)
     visible = vis;
     source->addEdge(this);
     dest->addEdge(this);
+    gamilt_clr = gamilt_colour;
 
-    adjust();
+    adjust(size_source, size_dest);
 }
 //! [0]
 
@@ -86,7 +87,7 @@ Node *Edge::destNode() const
 //! [1]
 
 //! [2]
-void Edge::adjust()
+void Edge::adjust(int size_source, int size_dest)
 {
     if (!source || !dest)
         return;
@@ -97,9 +98,10 @@ void Edge::adjust()
     prepareGeometryChange();
 
     if (length > qreal(20.)) {
-        QPointF edgeOffset((line.dx() * 10) / length, (line.dy() * 10) / length);
-        sourcePoint = line.p1() + edgeOffset;
-        destPoint = line.p2() - edgeOffset;
+        QPointF edgeOffset_source((line.dx() * size_source * 5) / length, (line.dy() * 10) / length);
+        QPointF edgeOffset_dest((line.dx() * size_dest * 5) / length, (line.dy() * 10) / length);
+        sourcePoint = line.p1() + edgeOffset_source;
+        destPoint = line.p2() - edgeOffset_dest;
     } else {
         sourcePoint = destPoint = line.p1();
     }
@@ -136,8 +138,16 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 //! [5]
     if (visible){
     // Draw the line itself
-    painter->setPen(QPen(Qt::red, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    painter->drawLine(line);
+        if(gamilt_clr==true)
+        {
+            painter->setPen(QPen(Qt::blue, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            painter->drawLine(line);
+        }
+        else
+        {
+            painter->setPen(QPen(Qt::red, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            painter->drawLine(line);
+        }
 //! [5]
 
 //! [6]

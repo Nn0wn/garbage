@@ -26,15 +26,15 @@ private slots:
 
     void on_action_2_triggered();
 
-    void on_action_11_triggered();
+//    void on_action_11_triggered();
 
     void on_checkBox_clicked();
 
     void on_pushButton_clicked();
 
-    void on_pushButton_3_clicked();
+//    void on_pushButton_3_clicked();
 
-    void on_pushButton_2_clicked();
+//    void on_pushButton_2_clicked();
 
 private:
     Ui::MainWindow *ui;

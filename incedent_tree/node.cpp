@@ -77,7 +77,7 @@ Node::Node(GraphWidget *graphWidget, bool* gr)
 void Node::addEdge(Edge *edge)
 {
     edgeList << edge;
-    edge->adjust();
+    edge->adjust(text.size(), text_orig.size());//fix_needed
 }
 
 QList<Edge *> Node::edges() const
@@ -87,6 +87,8 @@ QList<Edge *> Node::edges() const
 //! [1]
 
 //! [2]
+//!
+
 void Node::calculateForces()
 {
     if (!scene() || scene()->mouseGrabberItem() == this) {
@@ -130,7 +132,12 @@ void Node::calculateForces()
 //! [4]
 
 //! [5]
-    qreal lim = 0.1;
+    qreal lim = 0.01;
+//    if(!*gravity==false)
+//    {
+
+//    }
+
     if (*gravity == false){
         lim = 1000;
     }
@@ -187,9 +194,9 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::darkGray);
     if(text.size()==1)
-        painter->drawEllipse(-(mult-1.5)*(text.size()+1), -7, 2*mult*(text.size()+1), 20);
+        painter->drawEllipse(-(mult-0.5)*(text.size()+1), -7, 2*mult*(text.size()+1), 20);
     else
-    painter->drawEllipse(-(mult-1.5)*(text.size()), -7, 2*mult*(text.size()), 20);
+    painter->drawEllipse(-(mult-0.5)*(text.size()), -7, 2*mult*(text.size()), 20);
     QRadialGradient gradient(-3, -3, mult*(text.size()+1.25));
     if (option->state & QStyle::State_Sunken) {
         gradient.setCenter(3, 3);
@@ -222,7 +229,7 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
     switch (change) {
     case ItemPositionHasChanged:
         foreach (Edge *edge, edgeList)
-            edge->adjust();
+            edge->adjust(text.size(), text_orig.size());//fix_needed
         graph->itemMoved();
         break;
     default:

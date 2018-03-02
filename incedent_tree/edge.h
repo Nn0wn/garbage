@@ -59,12 +59,12 @@ class Node;
 class Edge : public QGraphicsItem
 {
 public:
-    Edge(Node *sourceNode, Node *destNode, bool vis);
+    Edge(Node *sourceNode, Node *destNode, bool vis, int size_source, int size_dest, bool gamilt_colour);
 
     Node *sourceNode() const;
     Node *destNode() const;
 
-    void adjust();
+    void adjust(int size_source, int size_dest);
 
     enum { Type = UserType + 2 };
     int type() const override { return Type; }
@@ -80,6 +80,7 @@ private:
     QPointF destPoint;
     qreal arrowSize;
     bool visible;
+    bool gamilt_clr;
 };
 //! [0]
 

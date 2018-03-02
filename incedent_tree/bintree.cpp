@@ -34,16 +34,22 @@ void fixRoots(BT* tree, BT* past)
     }
 }
 
-BT* delete_tree(BT* tree)
+INCTR* delete_tree(INCTR* tree, int size)
 {
     if(!tree)
         return tree;
-    if(tree->Left)
-        delete_tree(tree->Left);
-    if(tree->Right)
-        delete_tree(tree->Right);
-    tree=nullptr;
-    delete tree;
+//    for(int i=0; i<size; i++)
+//    {
+//        INCTR* temp = &tree[i];
+//        while(temp->next)
+//        {
+//            INCTR* temp2=temp;
+//            temp=temp->next;
+//            delete temp2;
+//        }
+//        delete temp;
+//    }
+    delete [] tree;
     return tree;
 }
 

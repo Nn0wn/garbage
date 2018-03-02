@@ -57,46 +57,134 @@
 #include <QKeyEvent>
 
 //! [0]
+static const double Pi = 3.14159265358979323846264338327950288419717;
 int i=0;
 int Xd=1500;
 
-int GraphWidget::Build(QWidget* parent, BT *tree, qreal x, qreal y, QGraphicsScene *scene, bool* gr){
-    tree->node = new Node(this, gr);
-    scene->addItem(tree->node);
-    tree->node->setPos(x, y);
-    while(i<tree->info.size())
+int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphicsScene *scene, bool* gr, int size, int *gampath)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+
+    int R=100*log(size);
+    qreal delta1=0, delta2=-R;
+    for(int j=0; j<size; j++)
     {
-    tree->node->text[i] = tree->info[i];
-    i++;
+        tree[j].node = new Node(this, gr);
+        //if(!scene)
+        scene->addItem(tree[j].node);
+        tree[j].node->setPos(delta1, delta2);
+        while(i<tree[j].name.size())
+        {
+            tree[j].node->text_orig[i] = tree[j].name[i];//fix_needed
+            tree[j].node->text[i] = tree[j].name[i];
+            i++;
+        }
+        i=0;
+        delta1=R*cos((j-1)*360*Pi/(size*180));
+        delta2=R*sin((j-1)*360*Pi/(size*180));
     }
-    i=0;
-    if ((RootBT(tree)!=nullptr)&&(tree->Root->node!=nullptr)){
-        scene->addItem(new Edge(tree->node, tree->Root->node, true));
-    }
-    qreal delta;
-    int level = (y+200)/50;
-    delta = 0.9*Xd/pow(2, level+2);
-    if (LeftBT(tree)!=nullptr)
-        Build(parent, LeftBT(tree), x+delta, y+50, scene, gr);
-    if (RightBT(tree)!=nullptr)
-        Build(parent, RightBT(tree), x-delta, y+50, scene, gr);
-    if ((LeftBT(tree)!=nullptr) && (RightBT(tree)!=nullptr)){
-        scene->addItem(new Edge(LeftBT(tree)->node, RightBT(tree)->node, false));
-        if ((RightBT(LeftBT(tree))!=nullptr) && ((LeftBT(RightBT(tree)))!=nullptr)){
-            scene->addItem(new Edge(RightBT(LeftBT(tree))->node, LeftBT(RightBT(tree))->node, false));
-//          if ((RightBT(LeftBT(LeftBT(tree)))!=nullptr) && ((LeftBT(RightBT(RightBT(tree))))!=nullptr))
-//             scene->addItem(new Edge(RightBT(RightBT(LeftBT(tree)))->node, LeftBT(LeftBT(RightBT(tree)))->node, false));
+    for(int j=0; j<size; j++)
+    {
+        if(tree[j].next)
+        {
+            INCTR* temp=tree[j].next;
+            for(int k=0; k<size; k++)
+            {
+                if(temp->name==tree[k].name)
+                {
+                    temp->node=tree[k].node;
+                    if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                        temp->node->text_orig=tree[j].node->text_orig;
+                }
+            }
+            while(temp->next)
+            {
+                temp=temp->next;
+                for(int k=0; k<size; k++)
+                {
+                    if(temp->name==tree[k].name)
+                    {
+                        temp->node=tree[k].node;
+                        if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                            temp->node->text_orig=tree[j].node->text_orig;
+                    }
+                }
+            }
         }
     }
+    for(int j=0; j<size; j++)
+    {
+        if(tree[j].next)
+        {
+            INCTR* temp=tree[j].next;
+            if(gampath!=nullptr)
+            {
+            for(int i=0; i<size-2; i++)
+                {
+                    if((tree[j].turn==gampath[i] && temp->turn==gampath[i+1]) || (temp->turn==gampath[i] && tree[j].turn==gampath[i+1])
+                            || (tree[j].turn==gampath[0] && temp->turn==gampath[size-1]) || (tree[j].turn==gampath[size-1] && temp->turn==gampath[0]))
+                        scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), true)));
+                    else
+                        scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                    while(temp->next)
+                    {
+                        temp=temp->next;
+                        if((tree[j].turn==gampath[i] && temp->turn==gampath[i+1]) || (temp->turn==gampath[i] && tree[j].turn==gampath[i+1])
+                                || (tree[j].turn==gampath[0] && temp->turn==gampath[size-1]) || (tree[j].turn==gampath[size-1] && temp->turn==gampath[0]))
+                            scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), true)));
+                        else
+                            scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                    }
+                }
+            }
+            else
+            {
+                scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                while(temp->next)
+                {
+                    temp=temp->next;
+                    scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                }
+            }
+        }
+    }
+//    //стрелки
+//    if ((tree->prev)){
+//        scene->addItem(new Edge(tree->node, tree->prev->node, true));
+//    }
+//    //стрелки
+//    qreal delta;
+//    int level = (y+200)/50;
+//    delta = 0.9*Xd/pow(2, level+2);
+//    if(tree->next)
+//    {
+//        Build(parent, tree->next, x+delta, y+50, scene, gr);
+//        //tree=tree->next;
+//    }
+
+//    if (LeftBT(tree)!=nullptr)
+//        Build(parent, LeftBT(tree), x+delta, y+50, scene, gr);
+//    if (RightBT(tree)!=nullptr)
+//        Build(parent, RightBT(tree), x-delta, y+50, scene, gr);
+//    if ((LeftBT(tree)!=nullptr) && (RightBT(tree)!=nullptr)){
+//        scene->addItem(new Edge(LeftBT(tree)->node, RightBT(tree)->node, false));
+//        if ((RightBT(LeftBT(tree))!=nullptr) && ((LeftBT(RightBT(tree)))!=nullptr)){
+//            scene->addItem(new Edge(RightBT(LeftBT(tree))->node, LeftBT(RightBT(tree))->node, false));
+//          if ((RightBT(LeftBT(LeftBT(tree)))!=nullptr) && ((LeftBT(RightBT(RightBT(tree))))!=nullptr))
+//             scene->addItem(new Edge(RightBT(RightBT(LeftBT(tree)))->node, LeftBT(LeftBT(RightBT(tree)))->node, false));
+//        }
+//    }
     return 0;
 }
 
-GraphWidget::GraphWidget(QWidget *parent, BT* tree, bool* gr)
+GraphWidget::GraphWidget(QWidget *parent, INCTR *tree, bool* gr, int size, int* gampath)
     : QGraphicsView(parent), timerId(0)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    scene->setSceneRect(-750, -300, 1500, 1200);
+    scene->setSceneRect(-(300*log(size)/2), -(300*log(size)/2), (300*log(size)), (300*log(size)));
     setScene(scene);
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
@@ -108,7 +196,7 @@ GraphWidget::GraphWidget(QWidget *parent, BT* tree, bool* gr)
 //! [0]
 
 //! [1]
-    Build(this, tree, 0, -200, scene, gr);
+    Build(this, &tree[0], 0, 0, scene, gr, size, gampath);
 }
 //! [1]
 
@@ -116,7 +204,7 @@ GraphWidget::GraphWidget(QWidget *parent, BT* tree, bool* gr)
 void GraphWidget::itemMoved()
 {
     if (!timerId)
-        timerId = startTimer(1000 / 25);
+        timerId = startTimer(1000 / 10);
 }
 
 void GraphWidget::timerEvent(QTimerEvent *event)

@@ -53,6 +53,8 @@
 
 #include <QGraphicsItem>
 #include <QList>
+#include <QTimer>
+
 
 class Edge;
 class GraphWidget;
@@ -73,6 +75,7 @@ public:
     int type() const override { return Type; }
 
     void calculateForces();
+
     bool advance();
 
     QRectF boundingRect() const override;
@@ -80,6 +83,7 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     //int text;
     QString text;
+    QString text_orig;
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
 
@@ -87,10 +91,12 @@ protected:
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
+    int tmr;
     QList<Edge *> edgeList;
     QPointF newPos;
     GraphWidget *graph;
     bool* gravity;
+
 };
 //! [0]
 

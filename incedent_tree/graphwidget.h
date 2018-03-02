@@ -62,10 +62,10 @@ class GraphWidget : public QGraphicsView
     Q_OBJECT
 
 public:
-    GraphWidget(QWidget *parent = 0, BT *tree = nullptr, bool *gr = nullptr);
+    GraphWidget(QWidget *parent = 0, INCTR *tree = nullptr, bool *gr = nullptr, int size = 0, int *gampath = nullptr);
 
     void itemMoved();
-    int Build(QWidget *parent = 0, BT* tree=nullptr, qreal x=0, qreal y=0, QGraphicsScene *scene = nullptr, bool* gr = nullptr);
+    int Build(QWidget *parent = 0, INCTR* tree=nullptr, qreal x=0, qreal y=0, QGraphicsScene *scene = nullptr, bool* gr = nullptr, int size = 0, int *gampath = nullptr);
 public slots:
   /*  void shuffle();
     void zoomIn();

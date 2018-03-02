@@ -7,8 +7,14 @@ typedef QString elem;
 
 typedef struct INCTR
 {
+    struct INCTR* prev=NULL;
     elem name;
+    int turn=0;
+    int deg=0;
+    int intdeg=0;
+    int outdeg=0;
     struct INCTR* next=NULL;
+    Node* node;
 }INCTR;
 
 typedef struct BT
@@ -36,7 +42,7 @@ BT* rotateleft(BT* tree);
 BT* insertroot(BT* tree, BT* root, int key, QString key_ch);
 BT* insertrand(BT* tree, BT* root, int key, QString key_ch);
 BT* Find(BT* tree, int key);
-BT *delete_tree(BT* tree);
+INCTR *delete_tree(INCTR* tree, int size);
 void fixRoots(BT* tree, BT* past);
 BT* merge(BT* tree1, BT* tree2);
 BT* remove(BT* tree, int key);
