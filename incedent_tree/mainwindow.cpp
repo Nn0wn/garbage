@@ -33,8 +33,9 @@ int Factor(int size)
     return size;
 }
 
-int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circle, int** gampath)
+int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int fullstep, int circle, int** gampath, int* fullgampath)
 {
+
     bool flag=false;
     INCTR* temp= new INCTR;
     temp=parent;
@@ -56,6 +57,7 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
                             {
                                 gampath[/*circle*/0][peaks_i+1]=circle;
                                 gampath[/*circle*/0][peaks_i+2]=step-1;
+                                gampath[/*circle*/0][peaks_i+3]=fullstep;
                                 return gampath;
                             }
                             else
@@ -68,11 +70,17 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
                     {
                         flag=false;
                         gampath[circle][step]=temp->turn;
+                        fullgampath[fullstep]=temp->turn;
                         //if(step<peaks_i-1)
                         step++;
-                        gampath=Gamilton(genparent, &tree[j], peaks_i, step, circle, gampath);
+                        fullstep++;
+                        gampath=Gamilton(genparent, &tree[j], peaks_i, step, fullstep, circle, gampath, fullgampath);
+                        fullstep=gampath[0][peaks_i+3];
                         step=gampath[/*circle*/0][peaks_i+2];
                         circle=gampath[/*circle*/0][peaks_i+1];
+                        fullgampath[fullstep]=parent->turn;
+                        fullstep++;
+                        gampath[0][peaks_i+3]=fullstep;
                     }
                 }
             }
@@ -80,8 +88,10 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
             {
                 if(temp->turn==genparent->turn)
                 {
-                    //gampath[circle][step]=temp->turn;
+                    fullgampath[fullstep]=temp->turn;
+                    fullgampath[fullstep+1]=parent->turn;
                     circle++;
+                    fullstep+=2;
 //                    if(temp->next)
 //                    {
                         gampath[circle]=new int[peaks_i+10];
@@ -92,6 +102,7 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
                     gampath[circle-1][peaks_i]=-1;
                     gampath[/*circle-1*/0][peaks_i+1]=circle;
                     gampath[/*circle-1*/0][peaks_i+2]=step;
+                    gampath[0][peaks_i+3]=fullstep;
                     return gampath;
                 }
                 else
@@ -101,8 +112,10 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
                         temp=temp->next;
                         if(temp->turn==genparent->turn)
                         {
-                            //gampath[circle][step]=temp->turn;
+                            fullgampath[fullstep]=temp->turn;
+                            fullgampath[fullstep+1]=parent->turn;
                             circle++;
+                            fullstep+=2;
 //                            if(temp->next)
 //                            {
                                 gampath[circle]=new int[peaks_i+10];
@@ -113,12 +126,14 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
                             gampath[circle-1][peaks_i]=-1;
                             gampath[/*circle-1*/0][peaks_i+1]=circle;
                             gampath[/*circle-1*/0][peaks_i+2]=step;
+                            gampath[0][peaks_i+3]=fullstep;
                             return gampath;
                         }
                     }
                     step-=1;
                     gampath[/*circle*/0][peaks_i+1]=circle;
                     gampath[/*circle*/0][peaks_i+2]=step;
+                    gampath[/*circle*/0][peaks_i+3]=fullstep;
                     return gampath;
                 }
             }
@@ -127,6 +142,7 @@ int** Gamilton(INCTR* genparent, INCTR* parent, int peaks_i, int step, int circl
     }
     //if(!temp->next)
     gampath[/*circle-1*/0][peaks_i+2]=step-1;
+    gampath[/*circle*/0][peaks_i+3]=fullstep;
     //delete temp;
     return gampath;
 }
@@ -353,7 +369,7 @@ void MainWindow::on_action_6_triggered()
         ui->textEdit_3->setText("ERROR, no info for graph construction!");
         return;
     }
-    GraphWidget *widget = new GraphWidget(this, tree, &gravity, peaks_i, nullptr);
+    GraphWidget *widget = new GraphWidget(this, tree, &gravity, peaks_i, 0, nullptr);
     QMainWindow* temp = new QMainWindow;
     temp->setCentralWidget(widget);
     temp->setWindowTitle("Graph output");
@@ -406,12 +422,20 @@ void MainWindow::on_checkBox_clicked()
 
 void MainWindow::on_pushButton_clicked()
 {
-    int step=1, circle=0, i=0;
+    int step=1, fullstep=1, circle=0;
     int** gampath=new int*[100];
-    for(i=0; i<log(Factor(peaks_i)); i++)
+    for(int i=0; i<log(Factor(peaks_i)); i++)
     {
         gampath[i]=nullptr;
         gampath[i]=new int[100];
+
+    }
+    int** fullgampath=new int*[peaks_i];
+    for(int i=0; i<peaks_i; i++)
+    {
+        fullgampath[i]=nullptr;
+        fullgampath[i]=new int[100];
+        memset(fullgampath[i], 0, 100*sizeof(int));
 
     }
     if(GhouilaHouriCheck(tree, peaks_i)!=0)
@@ -419,7 +443,6 @@ void MainWindow::on_pushButton_clicked()
         ui->textEdit_3->setText("Wrong graph");
         return;
     }
-    i=0;
     for(int i=0; i<peaks_i; i++)
     {
 //        if(circle==0)
@@ -427,7 +450,8 @@ void MainWindow::on_pushButton_clicked()
 //        else
 //            gampath[circle]=new int[peaks_i+10];
         gampath[circle][0]=tree[i].turn;
-        gampath=Gamilton(&tree[i], &tree[i], peaks_i, step, circle, gampath);
+        fullgampath[i][0]=tree[i].turn;
+        gampath=Gamilton(&tree[i], &tree[i], peaks_i, step, fullstep, circle, gampath, fullgampath[i]);
         //gampath[4]=new int [peaks_i];
         while(gampath[circle] && gampath[circle][peaks_i]==-1)
             circle++;
@@ -449,17 +473,22 @@ void MainWindow::on_pushButton_clicked()
     }
     if(ui->textEdit_4->toPlainText()!="")
     {
+        //ui->textEdit_4->clear();
         int chosen_circ = ui->textEdit_4->toPlainText().toInt();
         if(chosen_circ<circle)
         {
-            GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, gampath[chosen_circ-1]);
+
             QMainWindow* temp = new QMainWindow;
-            temp->setCentralWidget(widget);
             temp->setWindowTitle("Graph output");
+
+            GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 500, /*gampath[chosen_circ-1]*/fullgampath[1]);
+            temp->setCentralWidget(widget);
             temp->show();
+
         }
         else
         {
+            ui->textEdit_2->clear();
             ui->textEdit_2->setText("Wrong cycle");
             return;
         }

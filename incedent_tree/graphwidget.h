@@ -52,6 +52,7 @@
 #define GRAPHWIDGET_H
 
 #include <QGraphicsView>
+#include <QTimer>
 #include "bintree.h"
 #include "node.h"
 class Node;
@@ -62,10 +63,11 @@ class GraphWidget : public QGraphicsView
     Q_OBJECT
 
 public:
-    GraphWidget(QWidget *parent = 0, INCTR *tree = nullptr, bool *gr = nullptr, int size = 0, int *gampath = nullptr);
+    GraphWidget(QWidget *parent = 0, INCTR *tree = nullptr, bool *gr = nullptr, int size = 0, int mseconds = 0, int *gampath = nullptr);
 
     void itemMoved();
     int Build(QWidget *parent = 0, INCTR* tree=nullptr, qreal x=0, qreal y=0, QGraphicsScene *scene = nullptr, bool* gr = nullptr, int size = 0, int *gampath = nullptr);
+    int Build(QWidget *parent = 0, INCTR* tree=nullptr, qreal x=0, qreal y=0, QGraphicsScene *scene = nullptr, bool* gr = nullptr, int size = 0, int mseconds = 0, int *fullgampath = nullptr);
 public slots:
   /*  void shuffle();
     void zoomIn();
@@ -80,6 +82,13 @@ protected:
 private:
     int timerId;
     Node *centerNode;
+    QTimer* timer;
+
+signals:
+    void myTimeout(INCTR *tree, QGraphicsScene *scene, int *fullgampath);
+
+private slots:
+    void slotAlarmTimer();
 };
 //! [0]
 

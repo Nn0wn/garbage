@@ -60,6 +60,8 @@
 static const double Pi = 3.14159265358979323846264338327950288419717;
 int i=0;
 int Xd=1500;
+int* this_gampath= new int;
+INCTR* this_tree= new INCTR;
 
 int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphicsScene *scene, bool* gr, int size, int *gampath)
 {
@@ -174,38 +176,105 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
             }
         }
     }
-
-
-//    //стрелки
-//    if ((tree->prev)){
-//        scene->addItem(new Edge(tree->node, tree->prev->node, true));
-//    }
-//    //стрелки
-//    qreal delta;
-//    int level = (y+200)/50;
-//    delta = 0.9*Xd/pow(2, level+2);
-//    if(tree->next)
-//    {
-//        Build(parent, tree->next, x+delta, y+50, scene, gr);
-//        //tree=tree->next;
-//    }
-
-//    if (LeftBT(tree)!=nullptr)
-//        Build(parent, LeftBT(tree), x+delta, y+50, scene, gr);
-//    if (RightBT(tree)!=nullptr)
-//        Build(parent, RightBT(tree), x-delta, y+50, scene, gr);
-//    if ((LeftBT(tree)!=nullptr) && (RightBT(tree)!=nullptr)){
-//        scene->addItem(new Edge(LeftBT(tree)->node, RightBT(tree)->node, false));
-//        if ((RightBT(LeftBT(tree))!=nullptr) && ((LeftBT(RightBT(tree)))!=nullptr)){
-//            scene->addItem(new Edge(RightBT(LeftBT(tree))->node, LeftBT(RightBT(tree))->node, false));
-//          if ((RightBT(LeftBT(LeftBT(tree)))!=nullptr) && ((LeftBT(RightBT(RightBT(tree))))!=nullptr))
-//             scene->addItem(new Edge(RightBT(RightBT(LeftBT(tree)))->node, LeftBT(LeftBT(RightBT(tree)))->node, false));
-//        }
-//    }
     return 0;
 }
 
-GraphWidget::GraphWidget(QWidget *parent, INCTR *tree, bool* gr, int size, int* gampath)
+int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphicsScene *scene, bool* gr, int size, int mseconds, int *fullgampath)
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+    int R=100*log(size);
+    qreal delta1=0, delta2=-R;
+    for(int j=0; j<size; j++)
+    {
+        tree[j].node = new Node(this, gr);
+        //if(!scene)
+        scene->addItem(tree[j].node);
+        tree[j].node->setPos(delta1, delta2);
+        while(i<tree[j].name.size())
+        {
+            tree[j].node->text_orig[i] = tree[j].name[i];//fix_needed
+            tree[j].node->text[i] = tree[j].name[i];
+            i++;
+        }
+        i=0;
+        delta1=R*cos((j-1)*360*Pi/(size*180));
+        delta2=R*sin((j-1)*360*Pi/(size*180));
+    }
+    for(int j=0; j<size; j++)
+    {
+        if(tree[j].next)
+        {
+            INCTR* temp=tree[j].next;
+            for(int k=0; k<size; k++)
+            {
+                if(temp->name==tree[k].name)
+                {
+                    temp->node=tree[k].node;
+                    if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                        temp->node->text_orig=tree[j].node->text_orig;
+                }
+            }
+            while(temp->next)
+            {
+                temp=temp->next;
+                for(int k=0; k<size; k++)
+                {
+                    if(temp->name==tree[k].name)
+                    {
+                        temp->node=tree[k].node;
+                        if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                            temp->node->text_orig=tree[j].node->text_orig;
+                    }
+                }
+            }
+        }
+    }
+    //if(fullgampath==nullptr)
+    //{
+        for(int j=0; j<size; j++)
+        {
+            if(tree[j].next)
+            {
+                INCTR* temp=tree[j].next;
+                scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                while(temp->next)
+                {
+                    temp=temp->next;
+                        scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                }
+            }
+        }
+    //}
+    //else
+    //{
+
+    //}
+    this_gampath=fullgampath;
+    this_tree=tree;
+    timer=new QTimer;
+    //connect(timer, SIGNAL(timeout()), this, SIGNAL(myTimeout(INCTR*,QGraphicsScene*,int*)));
+    i=0;
+    //while(fullgampath[i+1]!=0)
+    connect(timer, SIGNAL(timeout()), this, SLOT(slotAlarmTimer()));
+    timer->start(1000);
+    i++;
+    return 0;
+}
+
+void GraphWidget::slotAlarmTimer()
+{
+    if(this_gampath[i+1]!=0)
+    {
+        this->scene()->addItem((new Edge(this_tree[this_gampath[i+1]-1].node, this_tree[this_gampath[i]-1].node, true, this_tree[this_gampath[i+1]-1].name.size(), this_tree[this_gampath[i]-1].name.size(), true)));
+            //if(this->scene()->items())
+            //this->scene()->removeItem(this_tree->node->edgeList);
+        i++;
+    }
+}
+
+GraphWidget::GraphWidget(QWidget *parent, INCTR *tree, bool* gr, int size, int mseconds, int* gampath)
     : QGraphicsView(parent), timerId(0)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
@@ -220,9 +289,11 @@ GraphWidget::GraphWidget(QWidget *parent, INCTR *tree, bool* gr, int size, int* 
     setMinimumSize(750, 550);
     setWindowTitle(tr("Elastic Nodes"));
 //! [0]
-
 //! [1]
-    Build(this, &tree[0], 0, 0, scene, gr, size, gampath);
+    if(mseconds==0)
+        Build(this, &tree[0], 0, 0, scene, gr, size, gampath);
+    else
+        Build(this, &tree[0], 0, 0, scene, gr, size, mseconds, gampath);
 }
 //! [1]
 
