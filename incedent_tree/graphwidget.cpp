@@ -70,22 +70,17 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
     Q_UNUSED(y);
 
     int R=100*log(size);
-    qreal delta1=0, delta2=-R;
+    qreal delta1=R, delta2=0;
     for(int j=0; j<size; j++)
     {
         tree[j].node = new Node(this, gr);
         //if(!scene)
         scene->addItem(tree[j].node);
         tree[j].node->setPos(delta1, delta2);
-        while(i<tree[j].name.size())
-        {
-            tree[j].node->text_orig[i] = tree[j].name[i];//fix_needed
-            tree[j].node->text[i] = tree[j].name[i];
-            i++;
-        }
-        i=0;
-        delta1=R*cos((j-1)*360*Pi/(size*180));
-        delta2=R*sin((j-1)*360*Pi/(size*180));
+        tree[j].node->text_orig=tree[j].name;//fix_needed
+        tree[j].node->text=tree[j].name;
+        delta1=R*cos((j+1)*(360/(size))*(Pi/180));
+        delta2=R*sin((j+1)*(360/(size))*(Pi/180));
     }
     for(int j=0; j<size; j++)
     {
@@ -185,22 +180,17 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
     Q_UNUSED(x);
     Q_UNUSED(y);
     int R=100*log(size);
-    qreal delta1=0, delta2=-R;
+    qreal delta1=R, delta2=0;
     for(int j=0; j<size; j++)
     {
         tree[j].node = new Node(this, gr);
         //if(!scene)
         scene->addItem(tree[j].node);
         tree[j].node->setPos(delta1, delta2);
-        while(i<tree[j].name.size())
-        {
-            tree[j].node->text_orig[i] = tree[j].name[i];//fix_needed
-            tree[j].node->text[i] = tree[j].name[i];
-            i++;
-        }
-        i=0;
-        delta1=R*cos((j-1)*360*Pi/(size*180));
-        delta2=R*sin((j-1)*360*Pi/(size*180));
+        tree[j].node->text_orig=tree[j].name;//fix_needed
+        tree[j].node->text=tree[j].name;
+        delta1=R*cos((j+1)*360*Pi/(size*180));
+        delta2=R*sin((j+1)*360*Pi/(size*180));
     }
     for(int j=0; j<size; j++)
     {
@@ -231,8 +221,6 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
             }
         }
     }
-    //if(fullgampath==nullptr)
-    //{
         for(int j=0; j<size; j++)
         {
             if(tree[j].next)
@@ -246,40 +234,52 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
                 }
             }
         }
-    //}
-    //else
-    //{
-
-    //}
     this_gampath=fullgampath;
     this_tree=tree;
-    timer=new QTimer;
-    //connect(timer, SIGNAL(timeout()), this, SIGNAL(myTimeout(INCTR*,QGraphicsScene*,int*)));
+    timer=new QTimer();
     i=0;
-    //while(fullgampath[i+1]!=0)
     connect(timer, SIGNAL(timeout()), this, SLOT(slotAlarmTimer()));
-    timer->start(1000);
-    i++;
+    timer->start(mseconds);
+    i=0;
     return 0;
 }
 
 void GraphWidget::slotAlarmTimer()
 {
+    bool flag=false;
     if(this_gampath[i+1]!=0)
     {
-        this->scene()->addItem((new Edge(this_tree[this_gampath[i+1]-1].node, this_tree[this_gampath[i]-1].node, true, this_tree[this_gampath[i+1]-1].name.size(), this_tree[this_gampath[i]-1].name.size(), true)));
-            //if(this->scene()->items())
-            //this->scene()->removeItem(this_tree->node->edgeList);
+        foreach (QGraphicsItem *item, scene()->items())
+        {
+            Edge *line = qgraphicsitem_cast<Edge *>(item);
+            if (line)
+            {
+                if(line->source==this_tree[this_gampath[i]-1].node && line->dest==this_tree[this_gampath[i+1]-1].node && line->gamilt_clr==true)
+                {
+                    this->scene()->removeItem(item);
+                    flag=true;
+
+                }
+            }
+        }
+        if(flag!=true)
+        {
+            this->scene()->addItem((new Edge(this_tree[this_gampath[i+1]-1].node, this_tree[this_gampath[i]-1].node, true, this_tree[this_gampath[i+1]-1].name.size(), this_tree[this_gampath[i]-1].name.size(), true)));
+            flag=false;
+        }
         i++;
     }
+    else
+        timer->stop();
 }
+
 
 GraphWidget::GraphWidget(QWidget *parent, INCTR *tree, bool* gr, int size, int mseconds, int* gampath)
     : QGraphicsView(parent), timerId(0)
 {
     QGraphicsScene *scene = new QGraphicsScene(this);
     scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-    scene->setSceneRect(-(300*log(size)/2), -(300*log(size)/2), (300*log(size)), (300*log(size)));
+    scene->setSceneRect(-((300*log(size)+150)/2), -((300*log(size)+150)/2), (300*log(size)+150), (300*log(size)+150));
     setScene(scene);
     setCacheMode(CacheBackground);
     setViewportUpdateMode(BoundingRectViewportUpdate);
@@ -301,7 +301,7 @@ GraphWidget::GraphWidget(QWidget *parent, INCTR *tree, bool* gr, int size, int m
 void GraphWidget::itemMoved()
 {
     if (!timerId)
-        timerId = startTimer(1000 / 10);
+        timerId = startTimer(1000 / 25);
 }
 
 void GraphWidget::timerEvent(QTimerEvent *event)

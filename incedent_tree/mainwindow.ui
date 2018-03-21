@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>601</width>
-    <height>230</height>
+    <height>276</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,8 +43,8 @@
    <widget class="QCheckBox" name="checkBox">
     <property name="geometry">
      <rect>
-      <x>11</x>
-      <y>163</y>
+      <x>10</x>
+      <y>160</y>
       <width>60</width>
       <height>17</height>
      </rect>
@@ -101,7 +101,7 @@
       <x>330</x>
       <y>20</y>
       <width>261</width>
-      <height>161</height>
+      <height>211</height>
      </rect>
     </property>
    </widget>
@@ -121,9 +121,9 @@
    <widget class="QTextEdit" name="textEdit_4">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>110</x>
       <y>160</y>
-      <width>111</width>
+      <width>90</width>
       <height>23</height>
      </rect>
     </property>
@@ -131,7 +131,7 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>110</x>
       <y>140</y>
       <width>141</width>
       <height>16</height>
@@ -139,6 +139,65 @@
     </property>
     <property name="text">
      <string>Gamilton cycle</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>185</y>
+      <width>141</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Gamilton for peak</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>205</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Show pathfinding</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_5">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>205</y>
+      <width>90</width>
+      <height>23</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_6">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>205</y>
+      <width>90</width>
+      <height>23</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>185</y>
+      <width>141</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Time for 1 step in msecs</string>
     </property>
    </widget>
   </widget>

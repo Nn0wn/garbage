@@ -59,6 +59,8 @@ class Node;
 class Edge : public QGraphicsItem
 {
 public:
+    Node *source, *dest;
+    bool gamilt_clr;
     Edge(Node *sourceNode, Node *destNode, bool vis, int size_source, int size_dest, bool gamilt_colour);
 
     Node *sourceNode() const;
@@ -74,13 +76,13 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 private:
-    Node *source, *dest;
+
 
     QPointF sourcePoint;
     QPointF destPoint;
     qreal arrowSize;
     bool visible;
-    bool gamilt_clr;
+
 };
 //! [0]
 

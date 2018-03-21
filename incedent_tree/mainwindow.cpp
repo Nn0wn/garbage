@@ -13,13 +13,14 @@
 INCTR* tree= new INCTR;
 int peaks_i;
 bool gravity = false;
+int** steps = new int*;
 
 
 int GhouilaHouriCheck(INCTR* peaks, int size)
 {
     for(int i=0; i<size; i++)
     {
-        if(peaks[i].intdeg<size/2 || peaks[i].outdeg<size/2)
+        if(peaks[i].intdeg+peaks[i].outdeg<size)
             return 1;
     }
     return 0;
@@ -420,45 +421,66 @@ void MainWindow::on_checkBox_clicked()
         gravity = false;
 }
 
+void MainWindow::on_pushButton_2_clicked()
+{
+    //ui->textEdit_5->clear();
+    if(tree!=nullptr)
+    {
+        if(ui->textEdit_5->toPlainText()!="" && ui->textEdit_6->toPlainText()!="")
+        {
+            //ui->textEdit_4->clear();
+            int chosen_peak = ui->textEdit_5->toPlainText().toInt();
+            int secs = ui->textEdit_6->toPlainText().toInt();
+            if(chosen_peak<peaks_i+1)
+            {
+
+                QMainWindow* temp = new QMainWindow;
+                GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, secs, steps[chosen_peak-1]);
+                temp->setWindowTitle("Graph output");
+                temp->setCentralWidget(widget);
+                temp->show();
+            }
+        }
+    }
+    else
+    {
+        ui->textEdit_2->clear();
+        ui->textEdit_2->setText("Find circles first");
+        return;
+    }
+}
+
 void MainWindow::on_pushButton_clicked()
 {
     int step=1, fullstep=1, circle=0;
-    int** gampath=new int*[100];
-    for(int i=0; i<log(Factor(peaks_i)); i++)
+    int** gampath=new int*[Factor(peaks_i)+1];
+    for(int i=0; i<Factor(peaks_i)+1; i++)
     {
         gampath[i]=nullptr;
-        gampath[i]=new int[100];
+        gampath[i]=new int[peaks_i+3];
 
     }
     int** fullgampath=new int*[peaks_i];
     for(int i=0; i<peaks_i; i++)
     {
         fullgampath[i]=nullptr;
-        fullgampath[i]=new int[100];
-        memset(fullgampath[i], 0, 100*sizeof(int));
+        fullgampath[i]=new int[2*Factor(peaks_i)+1];
+        memset(fullgampath[i], 0, 2*Factor(peaks_i)+1*sizeof(int));
 
     }
-    if(GhouilaHouriCheck(tree, peaks_i)!=0)
-    {
-        ui->textEdit_3->setText("Wrong graph");
-        return;
-    }
+    steps=fullgampath;
     for(int i=0; i<peaks_i; i++)
     {
-//        if(circle==0)
-//            gampath[circle]=new int[peaks_i+30];
-//        else
-//            gampath[circle]=new int[peaks_i+10];
         gampath[circle][0]=tree[i].turn;
         fullgampath[i][0]=tree[i].turn;
         gampath=Gamilton(&tree[i], &tree[i], peaks_i, step, fullstep, circle, gampath, fullgampath[i]);
-        //gampath[4]=new int [peaks_i];
         while(gampath[circle] && gampath[circle][peaks_i]==-1)
             circle++;
     }
     gampath[circle]=NULL;
     ui->textEdit_3->clear();
-    for(int i=0; i<circle-1; i++)
+    ui->textEdit_2->clear();
+    for(int i=0; i<circle; i++)
     {
         ui->textEdit_2->append(QString::number(i+1)+')'+'\t'+'|');
         for(int j=0; j<peaks_i; j++)
@@ -473,15 +495,12 @@ void MainWindow::on_pushButton_clicked()
     }
     if(ui->textEdit_4->toPlainText()!="")
     {
-        //ui->textEdit_4->clear();
         int chosen_circ = ui->textEdit_4->toPlainText().toInt();
         if(chosen_circ<circle)
         {
-
             QMainWindow* temp = new QMainWindow;
-            temp->setWindowTitle("Graph output");
-
-            GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 500, /*gampath[chosen_circ-1]*/fullgampath[1]);
+            GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 0, gampath[chosen_circ-1]);
+            temp->setWindowTitle("Graph output");        
             temp->setCentralWidget(widget);
             temp->show();
 
@@ -494,82 +513,3 @@ void MainWindow::on_pushButton_clicked()
         }
     }
 }
-
-//void MainWindow::on_pushButton_clicked()
-//{
-//    int i=0;
-//    int point_i;
-//    QString point;
-//    point=ui->textEdit_4->toPlainText();
-//    point_i=point.toInt();
-//    tree=remove(tree, point_i);
-//    QTableWidgetItem* widg_i=new QTableWidgetItem;
-//    while(i<ui->tableWidget->rowCount())
-//    {
-//        widg_i=ui->tableWidget->item(i,0);
-//        if(point==widg_i->data(0))
-//        {
-//            ui->tableWidget->removeRow(i);
-//            i=ui->tableWidget->rowCount();
-//        }
-//        i++;
-//    }
-//    fixRoots(tree, nullptr);
-//    /*if(tree!=nullptr)
-//    {
-//        GraphWidget *widget = new GraphWidget(this, tree, &gravity);
-//        QMainWindow* temp = new QMainWindow;
-//        temp->setCentralWidget(widget);
-//        temp->setWindowTitle("Graph output");
-//        //temp->show();
-//    }*/
-//}
-
-//void MainWindow::on_pushButton_3_clicked()
-//{
-//    QString element=ui->textEdit_5->toPlainText();
-//    //int* arr=new int[strsize(element)+1];
-//    //if(analyser(element, 0, arr)[0]!=-1)
-//    //{
-//    //    ui->textEdit_3->setPlainText("You entered wrong element");
-//    //    return;
-//    //}
-//    QStringList list=element.split(";", QString::SkipEmptyParts);
-//    tree=insertrand(tree, nullptr, list[1].toInt(), list[0]);
-//    fixRoots(tree, nullptr);
-//    int rows=ui->tableWidget->rowCount();
-//    ui->tableWidget->insertRow(rows);
-//    ui->tableWidget->setItem(rows, 0, new QTableWidgetItem(list[1]));
-//    ui->tableWidget->setItem(rows, 1, new QTableWidgetItem(list[0]));
-//    /*if(tree!=nullptr)
-//    {
-//        GraphWidget *widget = new GraphWidget(this, tree, &gravity);
-//        QMainWindow* temp = new QMainWindow;
-//        temp->setCentralWidget(widget);
-//        temp->setWindowTitle("Graph output");
-//        temp->show();
-//    }*/
-//}
-
-//void MainWindow::on_pushButton_2_clicked()
-//{
-//    ui->textEdit_3->clear();
-//    if(ui->textEdit_2->toPlainText()=="")
-//    {
-//        ui->textEdit_3->setPlainText("No info");
-//        return;
-//    }
-//    QString points_arr=ui->textEdit_2->toPlainText();
-//    QStringList points_arr_l=points_arr.split(" ", QString::SkipEmptyParts);
-//    BT* temp=Find(tree, points_arr_l.first().toInt());
-//    if(temp!=nullptr)
-//    {
-//        ui->textEdit_3->insertPlainText(temp->info);
-//        return;
-//    }
-//    else
-//    {
-//        ui->textEdit_3->setText("ERROR, no such element");
-//        return;
-//    }
-//}

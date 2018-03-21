@@ -114,7 +114,7 @@ QRectF Edge::boundingRect() const
     if (!source || !dest)
         return QRectF();
 
-    qreal penWidth = 1;
+    qreal penWidth = 10;
     qreal extra = (penWidth + arrowSize) / 2.0;
 
     return QRectF(sourcePoint, QSizeF(destPoint.x() - sourcePoint.x(),

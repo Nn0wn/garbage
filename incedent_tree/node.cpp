@@ -170,10 +170,8 @@ QRectF Node::boundingRect() const
     qreal adjust = 2;
     qreal mult = 6.25;
     if(text.size()==1)
-        return QRectF( -(2*mult*text.size()) - adjust, -10 - adjust, 4
-
-                       *mult*text.size() + adjust, 23 + adjust);
-    return QRectF( -(mult*text.size()) - adjust, -10 - adjust, 2*mult*text.size() + adjust, 23 + adjust);
+        return QRectF( -(2*mult*text.size()) - adjust, -10 - adjust, 4*mult*text.size() + adjust, 23 + adjust);
+    return QRectF( -(2*mult*text.size()) - adjust, -10 - adjust, 4*mult*text.size() + adjust, 23 + adjust);
 }
 //! [8]elements and text size
 

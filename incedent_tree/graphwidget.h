@@ -64,7 +64,7 @@ class GraphWidget : public QGraphicsView
 
 public:
     GraphWidget(QWidget *parent = 0, INCTR *tree = nullptr, bool *gr = nullptr, int size = 0, int mseconds = 0, int *gampath = nullptr);
-
+    QTimer* timer;
     void itemMoved();
     int Build(QWidget *parent = 0, INCTR* tree=nullptr, qreal x=0, qreal y=0, QGraphicsScene *scene = nullptr, bool* gr = nullptr, int size = 0, int *gampath = nullptr);
     int Build(QWidget *parent = 0, INCTR* tree=nullptr, qreal x=0, qreal y=0, QGraphicsScene *scene = nullptr, bool* gr = nullptr, int size = 0, int mseconds = 0, int *fullgampath = nullptr);
@@ -82,10 +82,6 @@ protected:
 private:
     int timerId;
     Node *centerNode;
-    QTimer* timer;
-
-signals:
-    void myTimeout(INCTR *tree, QGraphicsScene *scene, int *fullgampath);
 
 private slots:
     void slotAlarmTimer();
