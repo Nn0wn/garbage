@@ -452,64 +452,73 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_pushButton_clicked()
 {
-    int step=1, fullstep=1, circle=0;
-    int** gampath=new int*[Factor(peaks_i)+1];
-    for(int i=0; i<Factor(peaks_i)+1; i++)
+    if(tree!=nullptr)
     {
-        gampath[i]=nullptr;
-        gampath[i]=new int[peaks_i+3];
-
-    }
-    int** fullgampath=new int*[peaks_i];
-    for(int i=0; i<peaks_i; i++)
-    {
-        fullgampath[i]=nullptr;
-        fullgampath[i]=new int[2*Factor(peaks_i)+1];
-        memset(fullgampath[i], 0, 2*Factor(peaks_i)+1*sizeof(int));
-
-    }
-    steps=fullgampath;
-    for(int i=0; i<peaks_i; i++)
-    {
-        gampath[circle][0]=tree[i].turn;
-        fullgampath[i][0]=tree[i].turn;
-        gampath=Gamilton(&tree[i], &tree[i], peaks_i, step, fullstep, circle, gampath, fullgampath[i]);
-        while(gampath[circle] && gampath[circle][peaks_i]==-1)
-            circle++;
-    }
-    gampath[circle]=NULL;
-    ui->textEdit_3->clear();
-    ui->textEdit_2->clear();
-    for(int i=0; i<circle; i++)
-    {
-        ui->textEdit_2->append(QString::number(i+1)+')'+'\t'+'|');
-        for(int j=0; j<peaks_i; j++)
+        int step=1, fullstep=1, circle=0;
+        int** gampath=new int*[Factor(peaks_i)+1];
+        for(int i=0; i<Factor(peaks_i)+1; i++)
         {
-            for(int k=0; k<peaks_i; k++)
+            gampath[i]=nullptr;
+            gampath[i]=new int[peaks_i+3];
+
+        }
+        int** fullgampath=new int*[peaks_i];
+        for(int i=0; i<peaks_i; i++)
+        {
+            fullgampath[i]=nullptr;
+            fullgampath[i]=new int[2*Factor(peaks_i)+1];
+            memset(fullgampath[i], 0, 2*Factor(peaks_i)+1*sizeof(int));
+
+        }
+        steps=fullgampath;
+        for(int i=0; i<peaks_i; i++)
+        {
+            gampath[circle][0]=tree[i].turn;
+            fullgampath[i][0]=tree[i].turn;
+            gampath=Gamilton(&tree[i], &tree[i], peaks_i, step, fullstep, circle, gampath, fullgampath[i]);
+            while(gampath[circle] && gampath[circle][peaks_i]==-1)
+                circle++;
+        }
+        gampath[circle]=NULL;
+        ui->textEdit_3->clear();
+        ui->textEdit_2->clear();
+        for(int i=0; i<circle; i++)
+        {
+            ui->textEdit_2->append(QString::number(i+1)+')'+'\t'+'|');
+            for(int j=0; j<peaks_i; j++)
             {
-                if(gampath[i][j]==tree[k].turn)
-                    ui->textEdit_2->insertPlainText(QString::number(tree[k].turn)+'|');
+                for(int k=0; k<peaks_i; k++)
+                {
+                    if(gampath[i][j]==tree[k].turn)
+                        ui->textEdit_2->insertPlainText(QString::number(tree[k].turn)+'|');
+                }
+            }
+            ui->textEdit_2->append((QString)'\n');
+        }
+        if(ui->textEdit_4->toPlainText()!="")
+        {
+            int chosen_circ = ui->textEdit_4->toPlainText().toInt();
+            if(chosen_circ<circle)
+            {
+                QMainWindow* temp = new QMainWindow;
+                GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 0, gampath[chosen_circ-1]);
+                temp->setWindowTitle("Graph output");
+                temp->setCentralWidget(widget);
+                temp->show();
+
+            }
+            else
+            {
+                ui->textEdit_2->clear();
+                ui->textEdit_2->setText("Wrong cycle");
+                return;
             }
         }
-        ui->textEdit_2->append((QString)'\n');
     }
-    if(ui->textEdit_4->toPlainText()!="")
+    else
     {
-        int chosen_circ = ui->textEdit_4->toPlainText().toInt();
-        if(chosen_circ<circle)
-        {
-            QMainWindow* temp = new QMainWindow;
-            GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 0, gampath[chosen_circ-1]);
-            temp->setWindowTitle("Graph output");        
-            temp->setCentralWidget(widget);
-            temp->show();
-
-        }
-        else
-        {
-            ui->textEdit_2->clear();
-            ui->textEdit_2->setText("Wrong cycle");
-            return;
-        }
+        ui->textEdit_3->clear();
+        ui->textEdit_3->setText("No graph info");
+        return;
     }
 }
