@@ -51,7 +51,7 @@
 #include "edge.h"
 #include "node.h"
 #include "graphwidget.h"
-#include "bintree.h"
+#include "inctree.h"
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>

@@ -29,14 +29,14 @@ SOURCES += \
     edge.cpp \
     graphwidget.cpp \
     node.cpp \
-    bintree.cpp
+    inctree.cpp
 
 HEADERS += \
         mainwindow.h \
     edge.h \
     graphwidget.h \
     node.h \
-    bintree.h
+    inctree.h
 
 FORMS += \
         mainwindow.ui

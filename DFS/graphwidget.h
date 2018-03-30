@@ -53,7 +53,7 @@
 
 #include <QGraphicsView>
 #include <QTimer>
-#include "bintree.h"
+#include "inctree.h"
 #include "node.h"
 class Node;
 
@@ -85,6 +85,7 @@ private:
 
 private slots:
     void slotAlarmTimer();
+
 };
 //! [0]
 

@@ -51,7 +51,7 @@
 #include "graphwidget.h"
 #include "edge.h"
 #include "node.h"
-#include "bintree.h"
+#include "inctree.h"
 #include <math.h>
 
 #include <QKeyEvent>
@@ -62,6 +62,7 @@ int i=0;
 int Xd=1500;
 int* this_gampath= new int;
 INCTR* this_tree= new INCTR;
+int time_sec=0;
 
 int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphicsScene *scene, bool* gr, int size, int *gampath)
 {
@@ -179,36 +180,26 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
     Q_UNUSED(parent);
     Q_UNUSED(x);
     Q_UNUSED(y);
-    int R=100*log(size);
-    qreal delta1=R, delta2=0;
-    for(int j=0; j<size; j++)
+    if(mseconds!=1)
     {
-        tree[j].node = new Node(this, gr);
-        //if(!scene)
-        scene->addItem(tree[j].node);
-        tree[j].node->setPos(delta1, delta2);
-        tree[j].node->text_orig=tree[j].name;//fix_needed
-        tree[j].node->text=tree[j].name;
-        delta1=R*cos((j+1)*360*Pi/(size*180));
-        delta2=R*sin((j+1)*360*Pi/(size*180));
-    }
-    for(int j=0; j<size; j++)
-    {
-        if(tree[j].next)
+        int R=100*log(size);
+        qreal delta1=R, delta2=0;
+        for(int j=0; j<size; j++)
         {
-            INCTR* temp=tree[j].next;
-            for(int k=0; k<size; k++)
+            tree[j].node = new Node(this, gr);
+            //if(!scene)
+            scene->addItem(tree[j].node);
+            tree[j].node->setPos(delta1, delta2);
+            tree[j].node->text_orig=tree[j].name;//fix_needed
+            tree[j].node->text=tree[j].name;
+            delta1=R*cos((j+1)*360*Pi/(size*180));
+            delta2=R*sin((j+1)*360*Pi/(size*180));
+        }
+        for(int j=0; j<size; j++)
+        {
+            if(tree[j].next)
             {
-                if(temp->name==tree[k].name)
-                {
-                    temp->node=tree[k].node;
-                    if(tree[j].node->text_orig.size()<temp->node->text_orig)
-                        temp->node->text_orig=tree[j].node->text_orig;
-                }
-            }
-            while(temp->next)
-            {
-                temp=temp->next;
+                INCTR* temp=tree[j].next;
                 for(int k=0; k<size; k++)
                 {
                     if(temp->name==tree[k].name)
@@ -218,24 +209,83 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
                             temp->node->text_orig=tree[j].node->text_orig;
                     }
                 }
-            }
-        }
-    }
-        for(int j=0; j<size; j++)
-        {
-            if(tree[j].next)
-            {
-                INCTR* temp=tree[j].next;
-                scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
                 while(temp->next)
                 {
                     temp=temp->next;
-                        scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                    for(int k=0; k<size; k++)
+                    {
+                        if(temp->name==tree[k].name)
+                        {
+                            temp->node=tree[k].node;
+                            if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                                temp->node->text_orig=tree[j].node->text_orig;
+                        }
+                    }
                 }
             }
         }
+            for(int j=0; j<size; j++)
+            {
+                if(tree[j].next)
+                {
+                    INCTR* temp=tree[j].next;
+                    scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                    while(temp->next)
+                    {
+                        temp=temp->next;
+                            scene->addItem((new Edge(temp->node, tree[j].node, true, temp->name.size(), tree[j].name.size(), false)));
+                    }
+                }
+            }
+    }
+    else
+    {
+        bool flag=false;
+        bool exist=false;
+        int step=0;
+        int x=0;
+        int fullsize=0;
+        while(fullgampath[fullsize]!=0)
+            fullsize++;
+        for(int j=0; j<fullsize; j++)
+        {
+            for(int t=0; t<size; t++)
+            {
+                if(tree[t].turn==fullgampath[j] && tree[t].node)
+                    exist=true;
+            }
+            if(!exist)
+            {
+                for(int k=0; k<size; k++)
+                {
+                    if(tree[k].turn==fullgampath[j])
+                    {
+                        flag=false;
+                        tree[k].node = new Node(this, gr);
+                        //if(!scene)
+                        scene->addItem(tree[k].node);
+                        tree[k].node->setPos(x, -200+(tree[k].level-1)*100);
+                        tree[k].node->text_orig=tree[k].name;//fix_needed
+                        tree[k].node->text=tree[k].name;
+                    }
+                }
+            }
+            else
+            {
+                if(flag==false)
+                {
+                    flag=true;
+                    step++;
+                    x+=step*pow(-1,step)*100;
+                }
+            }
+            exist=false;
+
+        }
+    }
     this_gampath=fullgampath;
     this_tree=tree;
+    time_sec=mseconds;
     timer=new QTimer();
     i=0;
     connect(timer, SIGNAL(timeout()), this, SLOT(slotAlarmTimer()));
@@ -256,7 +306,12 @@ void GraphWidget::slotAlarmTimer()
             {
                 if(line->source==this_tree[this_gampath[i]-1].node && line->dest==this_tree[this_gampath[i+1]-1].node && line->gamilt_clr==true)
                 {
-                    this->scene()->removeItem(item);
+                    timer->stop();
+                    QTimer::singleShot(0,this, SLOT(slotAlarmTimer()));
+                    timer=new QTimer();
+                    connect(timer, SIGNAL(timeout()), this, SLOT(slotAlarmTimer()));
+                    timer->start(time_sec);
+                    //this->scene()->removeItem(item);
                     flag=true;
 
                 }
@@ -275,7 +330,6 @@ void GraphWidget::slotAlarmTimer()
         i=0;
     }
 }
-
 
 GraphWidget::GraphWidget(QWidget *parent, INCTR *tree, bool* gr, int size, int mseconds, int* gampath)
     : QGraphicsView(parent), timerId(0)
