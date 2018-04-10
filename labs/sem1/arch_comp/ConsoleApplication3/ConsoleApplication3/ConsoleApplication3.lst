@@ -1,0 +1,137 @@
+Microsoft (R) Macro Assembler Version 14.11.25547.0	    12/12/17 19:25:36
+Source.asm						     Page 1 - 1
+
+
+				.586p
+				.MODEL FLAT, C
+ 00000000			.DATA
+ 00000000 00000000		offsetcountn	dd 0
+ 00000000			.CODE
+
+				PUBLIC C SORTSTEP1				;распределение по интервалам единичной длины
+ 00000000			SORTSTEP1 PROC C Number:dword, NumRanDat:byte, CountNumUnit1:dword, Xmin:byte
+ 00000003  57			PUSH EDI					;сохранение регистров
+ 00000004  56			PUSH ESI
+ 00000005  8B 7D 14		MOV EDI, DWORD PTR Xmin			;получение значение xmin
+ 00000008  8B 45 08		MOV EAX, Number				;получение адреса массива случайных чисел
+ 0000000B  8B 75 10		MOV ESI, CountNumUnit1			;получение адреса массива счетчика чисел
+ 0000000E  8B 4D 0C		MOV ECX, DWORD PTR NumRanDat	;получение длины массива случайных чисел
+ 00000011			cycle:
+ 00000011  8B 18		MOV EBX,[EAX]					; получение числа
+ 00000013  2B DF		SUB EBX,EDI	; вычесть xmin
+ 00000015  8B 14 9E		MOV EDX,[ESI+4*EBX]				; получить счетчик этого числа
+ 00000018  42			INC EDX	; прибавить 1
+ 00000019  89 14 9E		MOV [ESI+4*EBX],EDX				; занести в обратно массив
+ 0000001C  83 C0 04		ADD EAX,4					; переход к след числу
+ 0000001F  E2 F0		LOOP cycle					; повторять пока не прошли весь массив
+ 00000021  5E			POP ESI					;восстановление значений регистров
+ 00000022  58			POP EAX
+				RET
+ 00000025			SORTSTEP1 ENDP
+
+				PUBLIC C SORTSTEP2				;распределение по интервалам произвольной длины
+ 00000025			SORTSTEP2 PROC C CountNumUnit1:dword, lenUnit1:byte, LGrInt:dword, CountNumN:dword ,NInt:byte, Xmin:byte
+ 00000028  57			PUSH EDI					;сохранение регистров
+ 00000029  56			PUSH ESI
+ 0000002A  8B 7D 0C		MOV EDI,DWORD PTR lenUnit1			;получение указателя на последний элемент массива счечика еденичной длины
+ 0000002D  4F			DEC EDI
+ 0000002E  C1 E7 02		SHL EDI,2
+ 00000031  03 7D 08		ADD EDI,CountNumUnit1
+ 00000034  8B 4D 0C		MOV ECX,DWORD PTR lenUnit1			;поолучение счетчика
+ 00000037  8B 45 18		MOV EAX, DWORD PTR NInt			;получение указателей по последние элементы массивов
+ 0000003A  48			DEC EAX
+ 0000003B  C1 E0 02		SHL EAX,2
+ 0000003E  57			push edi
+ 0000003F  8B 75 10		MOV ESI, LGrInt
+ 00000042  8B 7D 14		MOV Edi, CountNumN
+ 00000045  03 F8		ADD Edi,EAX
+ 00000047  03 F0		ADD ESI,EAX
+ 00000049  89 3D 00000000 R	MOV offsetcountn,edi
+ 0000004F  5F			pop edi					; опрерации перед выполнением цикла
+ 00000050  2B C0		SUB EAX,EAX
+ 00000052  8B 45 1C		MOV EAX, dword PTR Xmin
+ 00000055  03 C1		ADD EAX, ECX
+ 00000057  48			DEC EAX
+ 00000058  8B 1E		MOV EBX,[ESI]
+ 0000005A			cycle:
+ 0000005A  3B C3		CMP EAX,EBX
+ 0000005C  7C 14		JL falseif
+ 0000005E  50			PUSH EAX
+ 0000005F  56			push esi
+ 00000060  8B 35 00000000 R	mov esi,offsetcountn
+ 00000066  8B 16		MOV EDX,[Esi]
+ 00000068  8B 07		MOV EAX,[EDI]
+ 0000006A  03 D0		ADD EDX,EAX
+ 0000006C  89 16		MOV [Esi],EDX
+ 0000006E  5E			pop esi
+ 0000006F  58			POP EAX
+ 00000070  EB 0E		JMP endif1
+ 00000072			falseif:
+ 00000072  83 EE 04		SUB ESI,4
+ 00000075  83 2D 00000000 R	SUB offsetcountn,4
+	   04
+ 0000007C  8B 1E		MOV EBX,[ESI]
+ 0000007E  EB DA		JMP cycle
+ 00000080			endif1:
+ 00000080  48			DEC EAX
+ 00000081  83 EF 04		SUB EDI,4
+ 00000084  E2 D4		LOOP cycle					;повторять, пока не проверим весь массив
+ 00000086  5E			POP ESI					;восстановление значений регистров
+ 00000087  5F			POP EDI
+				RET
+ 0000008A			SORTSTEP2 ENDP
+				END
+Microsoft (R) Macro Assembler Version 14.11.25547.0	    12/12/17 19:25:36
+Source.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000004 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 0000008A Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+SORTSTEP1  . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000025 Public C
+  Number . . . . . . . . . . . .	DWord	 bp + 00000008
+  NumRanDat  . . . . . . . . . .	Byte	 bp + 0000000C
+  CountNumUnit1  . . . . . . . .	DWord	 bp + 00000010
+  Xmin . . . . . . . . . . . . .	Byte	 bp + 00000014
+  cycle  . . . . . . . . . . . .	L Near	 00000011 _TEXT	
+SORTSTEP2  . . . . . . . . . . .	P Near	 00000025 _TEXT	Length= 00000065 Public C
+  CountNumUnit1  . . . . . . . .	DWord	 bp + 00000008
+  lenUnit1 . . . . . . . . . . .	Byte	 bp + 0000000C
+  LGrInt . . . . . . . . . . . .	DWord	 bp + 00000010
+  CountNumN  . . . . . . . . . .	DWord	 bp + 00000014
+  NInt . . . . . . . . . . . . .	Byte	 bp + 00000018
+  Xmin . . . . . . . . . . . . .	Byte	 bp + 0000001C
+  cycle  . . . . . . . . . . . .	L Near	 0000005A _TEXT	
+  falseif  . . . . . . . . . . .	L Near	 00000072 _TEXT	
+  endif1 . . . . . . . . . . . .	L Near	 00000080 _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000001h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+offsetcountn . . . . . . . . . .	DWord	 00000000 _DATA	
+
+	   0 Warnings
+	   0 Errors

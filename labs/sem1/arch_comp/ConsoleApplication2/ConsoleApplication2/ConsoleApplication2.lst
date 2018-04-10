@@ -1,0 +1,81 @@
+Microsoft (R) Macro Assembler Version 14.11.25547.0	    12/13/17 04:46:01
+Source.asm						     Page 1 - 1
+
+
+				.586p
+				.MODEL FLAT, C
+ 00000000			.CODE
+
+				PUBLIC C SORT				;распределение чисел по интервалам
+ 00000000			SORT PROC C Number:dword, NumRanDat:byte, CountNumN:dword, LGrInt:dword
+ 00000003  57			PUSH EDI					;сохранение регистров
+ 00000004  56			PUSH ESI
+ 00000005  55			PUSH EBP
+ 00000006  8B 7D 08		MOV EDI, Number				;получение адреса массива случайных чисел
+ 00000009  8B 45 14		MOV EAX, LGrInt				;получение массива границ интервалов
+ 0000000C  8B 75 10		MOV ESI, CountNumN			;получение адреса массива счетчика чисел
+ 0000000F  8B 4D 0C		MOV ECX, DWORD PTR NumRanDat	;получение длины массива случайных чисел
+ 00000012  83 C0 04		ADD EAX, 4						;переход ко второму интервалу
+ 00000015			cycle:
+ 00000015  8B 1F		MOV EBX,[EDI]					; получение числа
+ 00000017  8B 28		MOV EBP, [EAX]					;получение левой границы интервала
+ 00000019  3B EB		CMP EBP, EBX					;сравниваем число с границей
+ 0000001B  7D 06		JGE nothing_new					;обработка числа
+ 0000001D  83 C0 04		ADD EAX, 4						;переход к следующей границе
+ 00000020  83 C6 04		ADD ESI, 4						;переход к счетчику слеующего интервала
+ 00000023			nothing_new:
+ 00000023  8B 16		MOV EDX, [ESI]					;получение счетчика интервала
+ 00000025  42			INC EDX							;увеличиваем счетчик интервала
+ 00000026  89 16		MOV [ESI], EDX					;кладем его обратно в массив
+ 00000028  83 C7 04		ADD EDI,4					; переход к след числу
+ 0000002B  E2 E8		LOOP cycle					; повторять пока не прошли весь массив					 
+ 0000002D  5D			POP EBP						; восстановление значений регистров
+ 0000002E  5E			POP ESI
+ 0000002F  5F			POP EDI
+				RET
+ 00000032			SORT ENDP
+				END
+Microsoft (R) Macro Assembler Version 14.11.25547.0	    12/13/17 04:46:01
+Source.asm						     Symbols 2 - 1
+
+
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+_DATA  . . . . . . . . . . . . .	32 Bit	 00000000 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00000032 Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+SORT . . . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000032 Public C
+  Number . . . . . . . . . . . .	DWord	 bp + 00000008
+  NumRanDat  . . . . . . . . . .	Byte	 bp + 0000000C
+  CountNumN  . . . . . . . . . .	DWord	 bp + 00000010
+  LGrInt . . . . . . . . . . . .	DWord	 bp + 00000014
+  cycle  . . . . . . . . . . . .	L Near	 00000015 _TEXT	
+  nothing_new  . . . . . . . . .	L Near	 00000023 _TEXT	
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000001h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+
+	   0 Warnings
+	   0 Errors
