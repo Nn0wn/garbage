@@ -51,15 +51,16 @@ int analyser(QString str, int k)
     return peaks;
 }
 
-int* Ford_Bellman(INCTR* tree, int* path)
+int* Ford_Bellman(INCTR* tree, int* path, int peak)
 {
     int step = 0;
     int* ranges = new int[peaks_i];
     bool change = false;
-    ranges[0]=0;
-    for(int i=1; i<peaks_i; i++)
+    ranges[peak]=0;
+    for(int i=0; i<peaks_i; i++)
     {
-        ranges[i]=INT_MAX;
+        if(i!=peak)
+            ranges[i]=INT_MAX;
     }
     INCTR* temp=new INCTR;
     for(int i=0; i<peaks_i-1; i++)
@@ -96,7 +97,7 @@ int* Ford_Bellman(INCTR* tree, int* path)
         }
         if(change == false)
         {
-            i=peaks_i-1;
+            i=peaks_i-2;
             path[step]=0;
             path[step+1]=0;
             //step++;
@@ -351,38 +352,29 @@ void MainWindow::on_pushButton_clicked()
     }
     if(ui->textEdit_4->toPlainText()!="")
     {
-        int chosen_peak = ui->textEdit_4->toPlainText().toInt();
-        if(chosen_peak<peaks_i)
+        QString peak_s = ui->textEdit_4->toPlainText();
+        int chosen_peak = -1;
+        for(int i=0; i<peaks_i; i++)
         {
-////            INCTR temp_two=tree[chosen_peak-1];
-//            INCTR* temp_three=new INCTR;
-////            tree[chosen_peak-1]=tree[0];
-////            tree[0]=temp_two;
-//            for(int j=0; j<peaks_i; j++)
-//            {
-//                temp_three=&tree[j];
-//                if(temp_three->turn==1)
-//                    temp_three->turn=tree[chosen_peak-1].turn;
-//                while(temp->next)
-//                {
-//                    temp=temp->next;
-//                    if(temp_three->turn==1)
-//                        temp_three->turn=tree[chosen_peak-1].turn;
-//                }
-//            }
-//            for(int j=0; j<peaks_i; j++)
-//            {
-//                temp_three=&tree[j];
-//                if(temp_three->name==tree[chosen_peak-1].name)
-//                    temp_three->turn=1;
-//                while(temp->next)
-//                {
-//                    temp=temp->next;
-//                    if(temp_three->name==tree[chosen_peak-1].name)
-//                        temp_three->turn=1;
-//                }
-//            }
-            ranges=Ford_Bellman(tree, path);
+            if(peak_s==tree[i].name)
+            {
+                chosen_peak = tree[i].turn;
+            }
+        }
+        if(chosen_peak!=-1)
+        {
+            ranges=Ford_Bellman(tree, path, chosen_peak-1);
+            ui->textEdit_3->clear();
+            ui->textEdit_3->setText("Distance to a peak ["+ tree[chosen_peak-1].name+"] is "+QString::number(ranges[chosen_peak-1]));
+            for(int i=0; i<peaks_i; i++)
+            {
+                if(i==chosen_peak-1)
+                    continue;
+                if(ranges[i]==INT_MAX)
+                    ui->textEdit_3->append("Distance to a peak ["+ tree[i].name+"] is infinity");
+                else
+                    ui->textEdit_3->append("Distance to a peak ["+ tree[i].name+"] is "+QString::number(ranges[i]));
+            }
             QMainWindow* temp = new QMainWindow;
             GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 1000, path);
             temp->setWindowTitle("Graph output");
@@ -399,116 +391,3 @@ void MainWindow::on_pushButton_clicked()
         }
     }
 }
-
-
-//void MainWindow::on_pushButton_2_clicked()
-//{
-//    if(ui->textEdit_2->toPlainText()!="")
-//    {
-//        if(ui->textEdit_4->toPlainText()!="")
-//        {
-//            int chosen_peak = ui->textEdit_4->toPlainText().toInt();
-//            if(chosen_peak<peaks_i)
-//            {
-//                INCTR* temp=new INCTR;
-//                for(int j=0; j<peaks_i; j++)
-//                {
-//                    temp=&tree[j];
-//                    temp->prev=nullptr;
-//                    while(temp->next)
-//                    {
-//                        temp=temp->next;
-//                        temp->grey=false;
-//                    }
-//                }
-//                path=new int[Factor(peaks_i)];
-//                //path=DFS(tree, peaks_i, chosen_peak-1, path);
-//            }
-//            else
-//            {
-//                ui->textEdit_3->clear();
-//                ui->textEdit_3->setText("Wrong peak");
-//                return;
-//            }
-//        }
-//        else
-//        {
-//            ui->textEdit_3->clear();
-//            ui->textEdit_3->setText("Choose any peak");
-//            return;
-//        }
-//        QString name=ui->textEdit_2->toPlainText();
-//        int min=INT_MAX;
-//        for(int j=0; j<peaks_i; j++)
-//        {
-//            if(name==tree[j].name)
-//                min=tree[j].level-1;
-//        }
-//        if(min!=INT_MAX)
-//            ui->textEdit_3->setText("Distance to a peak "+name+" is "+QString::number(min));
-//        else
-//            ui->textEdit_3->setText("There isn't such an element");
-//    }
-//    else
-//    {
-//        ui->textEdit_3->clear();
-//        ui->textEdit_3->setText("Write the name of the peak");
-//        return;
-//    }
-
-//}
-
-//void MainWindow::on_pushButton_3_clicked()
-//{
-//    if(!path)
-//    {
-//        if(ui->textEdit_4->toPlainText()!="")
-//        {
-//            int num=pow(2,peaks_i)+20;
-//            path=new int[num];
-//            INCTR* temp=new INCTR;
-//            for(int j=0; j<peaks_i; j++)
-//            {
-//                temp=&tree[j];
-//                temp->prev=nullptr;
-//                while(temp->next)
-//                {
-//                    temp=temp->next;
-//                    temp->grey=false;
-//                }
-//            }
-//            int chosen_peak = ui->textEdit_4->toPlainText().toInt();
-//            if(chosen_peak<peaks_i)
-//            {
-//                //path=DFS(tree, peaks_i, chosen_peak-1, path);
-//                QMainWindow* temp = new QMainWindow;
-//                GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 1, path);
-//                temp->setWindowTitle("Graph output");
-//                temp->setCentralWidget(widget);
-//                temp->show();
-//                temp->setAttribute(Qt::WA_DeleteOnClose);
-//            }
-//            else
-//            {
-//                ui->textEdit_3->clear();
-//                ui->textEdit_3->setText("Wrong peak");
-//                return;
-//            }
-//        }
-//        else
-//        {
-//            ui->textEdit_3->clear();
-//            ui->textEdit_3->setText("Choose any peak");
-//            return;
-//        }
-//    }
-//    else
-//    {
-//        QMainWindow* temp = new QMainWindow;
-//        GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 1, path);
-//        temp->setWindowTitle("Graph output");
-//        temp->setCentralWidget(widget);
-//        temp->show();
-//        temp->setAttribute(Qt::WA_DeleteOnClose);
-//    }
-//}
