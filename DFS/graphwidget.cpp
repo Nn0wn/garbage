@@ -245,6 +245,10 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
         int step=0;
         int x=0;
         int fullsize=0;
+        for(int k=0; k<size ;k++)
+        {
+            tree[k].node=nullptr;
+        }
         while(fullgampath[fullsize]!=0)
             fullsize++;
         for(int j=0; j<fullsize; j++)
