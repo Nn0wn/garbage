@@ -62,8 +62,8 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
         path_step=0;
         flow_min=INT_MAX;
         //int* prev_turn=new int[peaks_i-1];
-        int* flow_points=new int[peaks_i-1];
-        int* part_path=new int [peaks_i-1];
+        int* flow_points=new int[peaks_i];
+        int* part_path=new int [peaks_i];
         for(int i=0; i<peaks_i; i++)
         {
             flow_points[i]=-1;
@@ -79,12 +79,12 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
             if(cur_turn==0)
             {
                 part_path[path_step]=start;
-                path[step]=abs(start);
+                path[step]=start;
             }
             else
             {
                 part_path[path_step]=cur_turn;
-                path[step]=abs(cur_turn);
+                path[step]=cur_turn;
             }
             cur_turn=0;
             step++;
@@ -162,7 +162,7 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
             }
         }
         part_path[path_step]=finish;
-        path[step]=abs(finish);
+        path[step]=finish;
         step++;
         while(flow_points[k]!=-1)
         {
@@ -172,6 +172,8 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
         }    
         k=0;
         flow_max+=flow_min;
+        path[step]=flow_min;
+        step++;
         for(int i=0; i<peaks_i; i++)
         {
             INCTR* temp_turn;
@@ -518,18 +520,24 @@ void MainWindow::on_pushButton_clicked()
     }
     if(ui->textEdit_4->toPlainText()!="")
     {
-        QString peak_s = ui->textEdit_4->toPlainText();
-        int chosen_peak = -1;
+        QString peak_s1 = ui->textEdit_4->toPlainText();
+        QString peak_s2 = ui->textEdit_2->toPlainText();
+        int chosen_peak_start = -1;
+        int chosen_peak_finish = -1;
         for(int i=0; i<peaks_i; i++)
         {
-            if(peak_s==tree[i].name)
+            if(peak_s1==tree[i].name)
             {
-                chosen_peak = tree[i].turn;
+                chosen_peak_start = tree[i].turn;
+            }
+            if(peak_s2==tree[i].name)
+            {
+                chosen_peak_finish = tree[i].turn;
             }
         }
-        if(chosen_peak!=-1)
+        if(chosen_peak_start!=-1 && chosen_peak_finish!=-1)
         {
-            flow_max=Ford_Fulkeson(tree, path, chosen_peak, /*temp*/6);
+            flow_max=Ford_Fulkeson(tree, path, chosen_peak_start, chosen_peak_finish);
             int lol=0;
 //            ui->textEdit_3->clear();
 //            ui->textEdit_3->setText("Distance to a peak ["+ tree[chosen_peak-1].name+"] is "+QString::number(ranges[chosen_peak-1]));
@@ -543,7 +551,7 @@ void MainWindow::on_pushButton_clicked()
 //                    ui->textEdit_3->append("Distance to a peak ["+ tree[i].name+"] is "+QString::number(ranges[i]));
 //            }
             QMainWindow* temp = new QMainWindow;
-            GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 1000, path);
+            GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 1000, path, chosen_peak_finish);
             temp->setWindowTitle("Graph output");
             temp->setCentralWidget(widget);
             temp->show();

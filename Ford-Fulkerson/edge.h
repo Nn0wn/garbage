@@ -62,7 +62,8 @@ public:
     Node *source, *dest;
     bool gamilt_clr;
     int weight;
-    Edge(Node *sourceNode, Node *destNode, bool vis, int size_source, int size_dest, bool gamilt_colour, int ver_weight);
+    int weight_cur;
+    Edge(Node *sourceNode, Node *destNode, bool vis, int size_source, int size_dest, bool gamilt_colour, int ver_weight, int cur_weight);
 
     Node *sourceNode() const;
     Node *destNode() const;

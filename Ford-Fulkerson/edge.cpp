@@ -59,7 +59,7 @@ static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 
 //! [0]
-Edge::Edge(Node *sourceNode, Node *destNode, bool vis, int size_source, int size_dest, bool gamilt_colour, int ver_weight)
+Edge::Edge(Node *sourceNode, Node *destNode, bool vis, int size_source, int size_dest, bool gamilt_colour, int ver_weight, int cur_weight)
     : arrowSize(10)
 {
     setAcceptedMouseButtons(0);
@@ -70,6 +70,7 @@ Edge::Edge(Node *sourceNode, Node *destNode, bool vis, int size_source, int size
     dest->addEdge(this);
     gamilt_clr = gamilt_colour;
     weight=ver_weight;
+    weight_cur=cur_weight;
 
     adjust(size_source, size_dest);
 }
@@ -185,7 +186,7 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
         font.setBold(true);
         font.setPointSize(10);
         painter->setFont(font);
-        painter->drawText(line.center().x(), line.center().y(), QString::number(weight));
+        painter->drawText(line.center().x(), line.center().y(), QString::number(weight_cur) + '/' + QString::number(weight));
     }
 
 }
