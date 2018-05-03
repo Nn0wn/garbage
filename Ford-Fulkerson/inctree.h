@@ -13,6 +13,8 @@ typedef struct INCTR
     int turn=0;
     int weight=1;
     int weight_cur=0;
+    int intdeg=0;
+    int outdeg=0;
     bool grey=false;
     struct INCTR* next=NULL;
     Node* node=nullptr;

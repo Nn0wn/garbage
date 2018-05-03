@@ -56,26 +56,21 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
     int step=0, cur_flow=0, cur_turn=-1, flow_points_step=0, flow_max=0, flow_min=INT_MAX, k=0, path_step=0;
     while(true)
     {
-        //flow_max bug
         cur_turn=start;
         flow_points_step=0;
         path_step=0;
         flow_min=INT_MAX;
-        //int* prev_turn=new int[peaks_i-1];
         int* flow_points=new int[peaks_i];
         int* part_path=new int [peaks_i];
         for(int i=0; i<peaks_i; i++)
         {
             flow_points[i]=-1;
             part_path[i]=0;
-            //prev_turn[i]=0;
         }
         while(abs(cur_turn)!=finish)
         {
             INCTR* temp=&tree[abs(cur_turn)-1];
             INCTR* save_point = temp;
-            //path_step=0;
-            //
             if(cur_turn==0)
             {
                 part_path[path_step]=start;
@@ -93,7 +88,6 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
             {
                 for(int i=0; i<peaks_i; i++)
                 {
-                    //save_point=temp;
                     if(tree[i].turn==part_path[path_step-2])
                     {
                         save_point->prev=&tree[i];
@@ -101,7 +95,6 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
                     }
                 }
             }
-            //part_path[path_step-1]=temp->turn;//bug
             temp->grey=true;
             for(int i=0; i< peaks_i; i++)
             {
@@ -142,7 +135,6 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
             {
                 if(save_point->turn!=start)
                 {
-                    //save_point=save_point->prev;
                     cur_turn=save_point->prev->turn;
                     flow_points_step--;
                     path_step-=2;
@@ -220,59 +212,6 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
             }
         }
     }
-//    int step = 0;
-//    int* ranges = new int[peaks_i];
-//    bool change = false;
-//    ranges[peak]=0;
-//    for(int i=0; i<peaks_i; i++)
-//    {
-//        if(i!=peak)
-//            ranges[i]=INT_MAX;
-//    }
-//    INCTR* temp=new INCTR;
-//    for(int i=0; i<peaks_i-1; i++)
-//    {
-//        for(int j=0; j<peaks_i; j++)
-//        {
-//            temp=&tree[j];
-//            if(ranges[temp->turn-1]!=INT_MAX)
-//            {
-//                while(temp->next)
-//                {
-//                    temp=temp->next;
-//                    if(ranges[temp->turn-1]==INT_MAX)
-//                    {
-//                        ranges[temp->turn-1]=temp->weight+ranges[j];
-//                        path[step]=tree[j].turn;
-//                        path[step+1]=temp->turn;
-//                        step+=2;
-//                        change=true;
-//                    }
-//                    else
-//                    {
-//                        if(ranges[temp->turn-1]>(temp->weight+ranges[j]))
-//                        {
-//                                ranges[temp->turn-1]=temp->weight+ranges[j];
-//                                path[step]=tree[j].turn;
-//                                path[step+1]=temp->turn;
-//                                step+=2;
-//                                change=true;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        if(change == false)
-//        {
-//            i=peaks_i-2;
-//            path[step]=0;
-//            path[step+1]=0;
-//            //step++;
-//        }
-//        else
-//            change=false;
-//    }
-//    return ranges;
 }
 
 QString corrector(QString str)
@@ -334,9 +273,9 @@ INCTR* Read(QString str, INCTR* peaks, int size)
             k++;
             INCTR* temp=new INCTR;
             peaks[i].next=temp;
-            //peaks[i].outdeg++;
+            peaks[i].outdeg++;
             temp->next=NULL;
-            //temp->intdeg++;
+            temp->intdeg++;
             temp->prev=&peaks[i];
             while(str[k]!=',' && str[k]!='\r' && str[k]!='\0')
             {
@@ -362,10 +301,10 @@ INCTR* Read(QString str, INCTR* peaks, int size)
                 if(str[k]!='\0' && str[k]!='\r')
                 {
                     INCTR* temp2=new INCTR;
-                    //peaks[i].outdeg++;
+                    peaks[i].outdeg++;
                     temp->next=temp2;
                     temp2->next=NULL;
-                    //temp2->intdeg++;
+                    temp2->intdeg++;
                     temp2->prev=&peaks[i];
                     temp=temp2;
                     k++;
@@ -386,7 +325,7 @@ INCTR* Read(QString str, INCTR* peaks, int size)
                 temp=peaks[j].next;
                 if(peaks[i].name==temp->name)
                 {
-                    //peaks[i].intdeg+=temp->intdeg;
+                    peaks[i].intdeg+=temp->intdeg;
                     temp->turn=peaks[i].turn;
                 }
                 while(temp->next)
@@ -394,7 +333,7 @@ INCTR* Read(QString str, INCTR* peaks, int size)
                     temp=temp->next;
                     if(peaks[i].name==temp->name)
                     {
-                        //peaks[i].intdeg+=temp->intdeg;
+                        peaks[i].intdeg+=temp->intdeg;
                         temp->turn=peaks[i].turn;
                     }
                 }
@@ -526,11 +465,11 @@ void MainWindow::on_pushButton_clicked()
         int chosen_peak_finish = -1;
         for(int i=0; i<peaks_i; i++)
         {
-            if(peak_s1==tree[i].name)
+            if(peak_s1==tree[i].name && tree[i].intdeg==0)
             {
                 chosen_peak_start = tree[i].turn;
             }
-            if(peak_s2==tree[i].name)
+            if(peak_s2==tree[i].name && tree[i].outdeg==0)
             {
                 chosen_peak_finish = tree[i].turn;
             }
@@ -538,18 +477,8 @@ void MainWindow::on_pushButton_clicked()
         if(chosen_peak_start!=-1 && chosen_peak_finish!=-1)
         {
             flow_max=Ford_Fulkeson(tree, path, chosen_peak_start, chosen_peak_finish);
-            int lol=0;
-//            ui->textEdit_3->clear();
-//            ui->textEdit_3->setText("Distance to a peak ["+ tree[chosen_peak-1].name+"] is "+QString::number(ranges[chosen_peak-1]));
-//            for(int i=0; i<peaks_i; i++)
-//            {
-//                if(i==chosen_peak-1)
-//                    continue;
-//                if(ranges[i]==INT_MAX)
-//                    ui->textEdit_3->append("Distance to a peak ["+ tree[i].name+"] is infinity");
-//                else
-//                    ui->textEdit_3->append("Distance to a peak ["+ tree[i].name+"] is "+QString::number(ranges[i]));
-//            }
+            ui->textEdit_3->clear();
+            ui->textEdit_3->setText("Max network flow is "+QString::number(flow_max));
             QMainWindow* temp = new QMainWindow;
             GraphWidget* widget = new GraphWidget(this, tree, &gravity, peaks_i, 1000, path, chosen_peak_finish);
             temp->setWindowTitle("Graph output");
