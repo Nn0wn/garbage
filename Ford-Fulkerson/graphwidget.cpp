@@ -262,7 +262,7 @@ void GraphWidget::slotAlarmTimer()
             }
         }
         this->scene()->addItem((new Edge(this_tree[this_gampath[i+1]-1].node, this_tree[this_gampath[i]-1].node, true, this_tree[this_gampath[i+1]-1].name.size(), this_tree[this_gampath[i]-1].name.size(), true, 0/*this_tree[this_gampath[i]-1].weight*/)));
-        i+=2;
+        i+=1;
     }
     else
     {

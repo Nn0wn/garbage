@@ -58,34 +58,50 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
     {
         //flow_max bug
         cur_turn=start;
-        int* prev_turn=new int[peaks_i-1];
+        flow_points_step=0;
+        path_step=0;
+        flow_min=INT_MAX;
+        //int* prev_turn=new int[peaks_i-1];
         int* flow_points=new int[peaks_i-1];
         int* part_path=new int [peaks_i-1];
         for(int i=0; i<peaks_i; i++)
         {
             flow_points[i]=-1;
             part_path[i]=0;
-            prev_turn[i]=0;
+            //prev_turn[i]=0;
         }
         while(abs(cur_turn)!=finish)
         {
             INCTR* temp=&tree[abs(cur_turn)-1];
-            flow_points_step=0;
+            INCTR* save_point = temp;
+            //path_step=0;
+            //
+            if(cur_turn==0)
+            {
+                part_path[path_step]=start;
+                path[step]=abs(start);
+            }
+            else
+            {
+                part_path[path_step]=cur_turn;
+                path[step]=abs(cur_turn);
+            }
             cur_turn=0;
-            part_path[path_step]=temp->turn;
+            step++;
             path_step++;
-            if(prev_turn!=0)
+            if(part_path[path_step-1]!=start)
             {
                 for(int i=0; i<peaks_i; i++)
                 {
-                    if(tree[i].turn==prev_turn[path_step-1])
+                    //save_point=temp;
+                    if(tree[i].turn==part_path[path_step-2])
                     {
-                        temp->prev=&tree[i];
+                        save_point->prev=&tree[i];
                         i=peaks_i;
                     }
                 }
             }
-            prev_turn[path_step-1]=temp->turn;
+            //part_path[path_step-1]=temp->turn;//bug
             temp->grey=true;
             for(int i=0; i< peaks_i; i++)
             {
@@ -114,24 +130,27 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
                     while(temp->next)
                     {
                         temp=temp->next;
-                        if(temp->turn==prev_turn[path_step-1] && temp->weight_cur>cur_flow)
+                        if(temp->turn==part_path[path_step-1] && temp->weight_cur>cur_flow)
                         {
                             cur_flow=temp->weight_cur;
-                            cur_turn=-temp->turn;
+                            cur_turn=-tree[i].turn;
                         }
                     }
                 }
             }
             if(cur_flow==0 || cur_turn==-1)
             {
-                if(temp->turn!=start)
+                if(save_point->turn!=start)
                 {
-                    temp=temp->prev;
+                    //save_point=save_point->prev;
+                    cur_turn=save_point->prev->turn;
                     flow_points_step--;
-                    path_step--;
+                    path_step-=2;
                 }
                 else
                 {
+                    path[step]=0;
+                    path[step+1]=0;
                     return flow_max;
                 }
             }
@@ -143,39 +162,48 @@ int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
             }
         }
         part_path[path_step]=finish;
+        path[step]=abs(finish);
+        step++;
         while(flow_points[k]!=-1)
         {
             if(flow_points[k]<flow_min)
                 flow_min=flow_points[k];
             k++;
-        }
+        }    
+        k=0;
         flow_max+=flow_min;
         for(int i=0; i<peaks_i; i++)
         {
             INCTR* temp_turn;
             if(part_path[i]==0 || part_path[i+1]==0)
-                i=peaks_i;
+                i=peaks_i-1;
             for(int j=0; j<peaks_i; j++)
             {
-                if(tree[j].turn==part_path[i])
+                if(part_path[i+1]>0)
                 {
-                    temp_turn=&tree[j];
-                    while(temp_turn->next && temp_turn->turn!=part_path[i+1])
+                    if(tree[j].turn==abs(part_path[i]))
                     {
-                        temp_turn=temp_turn->next;
+                        temp_turn=&tree[j];
+                        while(temp_turn->next && temp_turn->turn!=part_path[i+1])
+                        {
+                            temp_turn=temp_turn->next;
+                        }
+                        if(temp_turn->turn==part_path[i+1])
+                            temp_turn->weight_cur+=flow_min;
                     }
-                    if(temp_turn->turn==part_path[i+1])
-                        temp_turn->weight_cur+=flow_min;
                 }
-                else/*(tree[j].turn==part_path[i])*/
+                else if(part_path[i+1]<0)
                 {
-                    temp_turn=&tree[j];
-                    while(temp_turn->next && temp_turn->turn!=-part_path[i+1])
+                    if(tree[j].turn==-part_path[i+1])
                     {
-                        temp_turn=temp_turn->next;
+                        temp_turn=&tree[j];
+                        while(temp_turn->next && temp_turn->turn!=part_path[i])
+                        {
+                            temp_turn=temp_turn->next;
+                        }
+                        if(temp_turn->turn==part_path[i])
+                            temp_turn->weight_cur-=flow_min;
                     }
-                    if(temp_turn->turn==-part_path[i+1])
-                        temp_turn->weight_cur-=flow_min;
                 }
             }
         }
@@ -502,6 +530,7 @@ void MainWindow::on_pushButton_clicked()
         if(chosen_peak!=-1)
         {
             flow_max=Ford_Fulkeson(tree, path, chosen_peak, /*temp*/6);
+            int lol=0;
 //            ui->textEdit_3->clear();
 //            ui->textEdit_3->setText("Distance to a peak ["+ tree[chosen_peak-1].name+"] is "+QString::number(ranges[chosen_peak-1]));
 //            for(int i=0; i<peaks_i; i++)
