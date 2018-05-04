@@ -360,6 +360,9 @@ void GraphWidget::slotAlarmTimer()
     else
     {
         timer->stop();
+        k=0;
+        j=0;
+        i=0;
     }
 }
 

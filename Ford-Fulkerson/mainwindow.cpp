@@ -54,6 +54,16 @@ int analyser(QString str, int k)
 int Ford_Fulkeson(INCTR* tree, int* path, int start, int finish)
 {
     int step=0, cur_flow=0, cur_turn=-1, flow_points_step=0, flow_max=0, flow_min=INT_MAX, k=0, path_step=0;
+    for(int i=0; i< peaks_i; i++)
+    {
+        INCTR* temp_grey=&tree[i];
+        temp_grey->weight_cur=0;
+        while(temp_grey->next)
+        {
+            temp_grey=temp_grey->next;
+            temp_grey->weight_cur=0;
+        }
+    }
     while(true)
     {
         cur_turn=start;
