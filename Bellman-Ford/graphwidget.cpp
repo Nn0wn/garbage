@@ -93,7 +93,7 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
                 if(temp->name==tree[k].name)
                 {
                     temp->node=tree[k].node;
-                    if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                    if(tree[j].node->text_orig.size()<temp->node->text_orig.size())
                         temp->node->text_orig=tree[j].node->text_orig;
                 }
             }
@@ -105,7 +105,7 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
                     if(temp->name==tree[k].name)
                     {
                         temp->node=tree[k].node;
-                        if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                        if(tree[j].node->text_orig.size()<temp->node->text_orig.size())
                             temp->node->text_orig=tree[j].node->text_orig;
                     }
                 }
@@ -203,7 +203,7 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
                 if(temp->name==tree[k].name)
                 {
                     temp->node=tree[k].node;
-                    if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                    if(tree[j].node->text_orig.size()<temp->node->text_orig.size())
                         temp->node->text_orig=tree[j].node->text_orig;
                 }
             }
@@ -215,7 +215,7 @@ int GraphWidget::Build(QWidget* parent, INCTR *tree, qreal x, qreal y, QGraphics
                     if(temp->name==tree[k].name)
                     {
                         temp->node=tree[k].node;
-                        if(tree[j].node->text_orig.size()<temp->node->text_orig)
+                        if(tree[j].node->text_orig.size()<temp->node->text_orig.size())
                             temp->node->text_orig=tree[j].node->text_orig;
                     }
                 }

@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+
+#include "helpbrowser.h"
 #include <QMainWindow>
 
 namespace Ui {
@@ -31,6 +33,8 @@ private slots:
     void on_checkBox_clicked();
 
     void on_pushButton_clicked();
+
+    void on_actionAbout_triggered();
 
 //    void on_pushButton_3_clicked();
 

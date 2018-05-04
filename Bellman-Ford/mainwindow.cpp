@@ -391,3 +391,10 @@ void MainWindow::on_pushButton_clicked()
         }
     }
 }
+
+void MainWindow::on_actionAbout_triggered()
+{
+    HelpBrowser* browser = new HelpBrowser(":/", "index.htm");
+    browser->resize(800, 600);
+    browser->show();
+}

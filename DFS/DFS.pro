@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = DFS
 TEMPLATE = app
+CONFIG += c++11
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -36,7 +37,8 @@ HEADERS += \
     edge.h \
     graphwidget.h \
     node.h \
-    inctree.h
+    inctree.h \
+    helpbrowser.h
 
 FORMS += \
         mainwindow.ui

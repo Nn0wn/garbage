@@ -185,7 +185,8 @@ void Edge::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
         font.setBold(true);
         font.setPointSize(10);
         painter->setFont(font);
-        painter->drawText(line.center().x(), line.center().y(), QString::number(weight));
+        painter->drawText(((line.p1() + line.p2()) / 2).x(), ((line.p1() + line.p2()) / 2).y(), QString::number(weight));
+//        (line.p1() + line.p2()) / 2
     }
 
 }

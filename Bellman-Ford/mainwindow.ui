@@ -135,6 +135,7 @@
     </property>
     <addaction name="action_5"/>
     <addaction name="action_6"/>
+    <addaction name="actionAbout"/>
     <addaction name="separator"/>
     <addaction name="action_7"/>
     <addaction name="separator"/>
@@ -203,6 +204,11 @@
   <action name="action_6">
    <property name="text">
     <string>Construct the graph</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

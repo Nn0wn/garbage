@@ -471,3 +471,10 @@ void MainWindow::on_pushButton_3_clicked()
         temp->setAttribute(Qt::WA_DeleteOnClose);
     }
 }
+
+void MainWindow::on_actionAbout_triggered()
+{
+    HelpBrowser* browser = new HelpBrowser(":/", "index.htm");
+    browser->resize(800, 600);
+    browser->show();
+}
