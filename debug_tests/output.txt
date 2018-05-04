@@ -1,0 +1,42 @@
+1)s->e		
+2)s->a		-----
+3)e->d		
+4)a->c		-----
+5)d->c		a->c----
+6)d->a		s->a
+7)c->b		-----
+8)a->c		d->c
+9)c->b		c->b
+
+
+kerubehckeklol
+nam ysae
+?gniog ti si woh
+rodip
+
+2)
+s->a=8
+a->d=8-4=4
+d->t=8
+s->c=4
+c->d=4
+a->b=4
+b->t=4
+3)
+s->a=8
+s->c=9
+a->d=4
+a->b=4
+b->t=9
+c->d=9
+d->b=5
+d->t=8
+4)
+s->a=10
+s->c=9
+a->d=6
+a->b=4
+b->t=9
+c->d=9
+d->b=5
+d->t=10

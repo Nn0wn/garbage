@@ -1,0 +1,11 @@
+abc,anb,bca,asdsd,sddfsdf
+anb,cd,sddfsdf,abc
+asdsd,sddfsdf
+sfsadf
+sddfsdf
+bca,cna,cnb
+cd
+cna
+cnb
+5-176;5-120
+3-12;3-6
