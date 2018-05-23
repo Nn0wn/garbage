@@ -1,5 +1,4 @@
 #pragma once
-#define _SCL_SECURE_NO_WARNINGS
 #include <assert.h>
 #include <cstring>
 #include <algorithm> // std::copy, std::rotate

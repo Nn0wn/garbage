@@ -1,13 +1,47 @@
 #include "stdafx.h"
 #define _USE_MATH_DEFINES
-#define _SCL_SECURE_NO_WARNINGS
 #include "additional_func.h"
-//#include <iostream>
 #include <time.h>
 
 bool CompReal(double a, double b)
 {
 	return a < b;
+}
+
+bool ident_vect(vector<size_t> a, vector<neighbours> b)
+{
+	size_t j = 0;
+	for (size_t i = 0; i < a.size(); i+=2, j++)
+	{
+		if (a[i] != b[j].first)
+			return false;
+		if (a[i + 1] != b[j].second)
+			return false;
+	}
+	return true;
+}
+
+bool ident_vect(vector<size_t> a, vector<dual_un> b)
+{
+	for (size_t i = 0; i < a.size(); i++)
+	{
+		if (a[i] != b[i].num)
+			return false;
+	}
+	return true;
+}
+
+vector<shared_ptr<Shape>> test_create(size_t amount)
+{
+	vector<shared_ptr<Shape>> arr(amount);
+	for (size_t i = 0; i < amount; i++)
+	{
+		if (i % 2 == 0)
+			arr[i] = shared_ptr<Shape>(new Ellipse(i+2, 0, i + 5, i + 7, i + 15));
+		else
+			arr[i] = shared_ptr<Shape>(new Trap(i + 1, 1 + i, i + 10, i + 10, i + 10, i + 10));
+	}
+	return arr;
 }
 
 vector<shared_ptr<Shape>> create_arr(size_t amount)
