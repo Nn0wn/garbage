@@ -1,0 +1,4 @@
+﻿  cycle_shift.cpp
+c:\users\zo_om\source\repos\cycle_shift\cycle_shift\morris-pratt.h(47): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\zo_om\source\repos\cycle_shift\cycle_shift\morris-pratt.h(75): warning C4018: >=: несоответствие типов со знаком и без знака
+  cycle_shift.vcxproj -> C:\Users\zo_Om\source\repos\cycle_shift\Debug\cycle_shift.exe
