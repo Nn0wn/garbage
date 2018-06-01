@@ -1,0 +1,1 @@
+/usr/bin/c++   -Wall -std=c++11    CMakeFiles/naive_cmp.dir/src/naive_cmp.cpp.o CMakeFiles/naive_cmp.dir/src/kmp.cpp.o CMakeFiles/naive_cmp.dir/src/help_func.cpp.o  -o naive_cmp -rdynamic 

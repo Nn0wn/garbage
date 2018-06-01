@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/help_func.h
+iostream
+-
+string
+-
+vector
+-
+
+../include/kmp.h
+vector
+-
+iostream
+-
+help_func.h
+../include/help_func.h
+
+/home/ubuntu/workspace/Test/garbage/strings/lab5/src/cycle_shift.cpp
+
+/home/ubuntu/workspace/Test/garbage/strings/lab5/src/help_func.cpp
+help_func.h
+/home/ubuntu/workspace/Test/garbage/strings/lab5/src/help_func.h
+
+/home/ubuntu/workspace/Test/garbage/strings/lab5/src/kmp.cpp
+kmp.h
+/home/ubuntu/workspace/Test/garbage/strings/lab5/src/kmp.h
+

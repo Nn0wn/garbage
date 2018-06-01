@@ -1,0 +1,1 @@
+/usr/bin/c++   -Wall -std=c++11    CMakeFiles/lab_5.dir/src/lab_5.cpp.o CMakeFiles/lab_5.dir/src/kmp.cpp.o CMakeFiles/lab_5.dir/src/help_func.cpp.o  -o lab_5 -rdynamic 

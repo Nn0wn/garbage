@@ -1,0 +1,4 @@
+/home/ubuntu/workspace/Test/garbage/strings/lab5/build/CMakeFiles/cycle_shift.dir
+/home/ubuntu/workspace/Test/garbage/strings/lab5/build/CMakeFiles/lab_5.dir
+/home/ubuntu/workspace/Test/garbage/strings/lab5/build/CMakeFiles/naive_cmp.dir
+/home/ubuntu/workspace/Test/garbage/strings/lab5/build/CMakeFiles/test.dir
